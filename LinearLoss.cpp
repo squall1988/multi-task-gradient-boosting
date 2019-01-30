@@ -6,7 +6,7 @@
 #include "error.h"
 #include <iostream>
 
-int LinearLoss::get_gradient(const vector<float> &pred, const vector<int> &label, Matrix &gradients) {
+int LinearLoss::get_gradient(const vector<float> &pred, const vector<float> &label, Matrix &gradients) {
   if (pred.size() != label.size()) {
     return LOSS_ERROR;
   }
@@ -21,7 +21,7 @@ int LinearLoss::get_gradient(const vector<float> &pred, const vector<int> &label
   return SUCCESS;
 }
 
-int LogisticLoss::get_gradient(const vector<float> &pred, const vector<int> &label, Matrix &gradients) {
+int LogisticLoss::get_gradient(const vector<float> &pred, const vector<float> &label, Matrix &gradients) {
   if (pred.size() != label.size()) {
     return LOSS_ERROR;
   }

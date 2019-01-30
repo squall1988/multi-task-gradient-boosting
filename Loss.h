@@ -14,7 +14,7 @@ class Loss {
  public:
   virtual ~Loss() {}
   virtual int get_gradient(const vector<float> &pred,
-                           const vector<int> &label,
+                           const vector<float> &label,
                            Matrix &gradients) = 0;
 
 };

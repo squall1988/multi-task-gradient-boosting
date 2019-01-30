@@ -71,7 +71,7 @@ class Dataset {
   int get_task_num() const {
     return this->task_num;
   }
-  const vector<int> &get_label_data() const {
+  const vector<float> &get_label_data() const {
     return this->label;
   }
 
@@ -91,7 +91,7 @@ class Dataset {
   int feature_size;
   int dataset_size;
   int task_num;
-  vector<int> label;
+  vector<float> label;
   vector<int> task;
   Matrix gradients;
 

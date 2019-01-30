@@ -45,7 +45,7 @@ inline std::vector<std::string> Split(const std::string &s, char delim) {
   return ret;
 }
 
-inline float RMSE(const vector<int> &label, const vector<float> &pred) {
+inline float RMSE(const vector<float> &label, const vector<float> &pred) {
   if (label.size() != pred.size() || label.empty() || pred.empty()) {
     return RMSE_ERROR;
   }
@@ -57,7 +57,7 @@ inline float RMSE(const vector<int> &label, const vector<float> &pred) {
   return sqrt(sum_error / label.size());
 }
 
-inline float nrMSE(const vector<int> &label, const vector<float> &pred) {
+inline float nrMSE(const vector<float> &label, const vector<float> &pred) {
   if (label.size() != pred.size() || label.empty() || pred.empty()) {
     return nrMSE_ERROR;
   }
@@ -72,7 +72,7 @@ inline float nrMSE(const vector<int> &label, const vector<float> &pred) {
   return sqrt(sum_error / label.size()) / (Max - Min);
 }
 
-inline float BinaryLogLoss(const vector<int> &label, const vector<float> &pred) {
+inline float BinaryLogLoss(const vector<float> &label, const vector<float> &pred) {
   if (label.size() != pred.size() || label.empty() || pred.empty()) {
     return LOG_LOSS_ERROR;
   }
@@ -97,7 +97,7 @@ inline float BinaryLogLoss(const vector<int> &label, const vector<float> &pred) 
   return sum_error / label.size();
 }
 
-inline float ApproximateAUC(const vector<int> &label, const vector<float> &pred) {
+inline float ApproximateAUC(const vector<float> &label, const vector<float> &pred) {
   if (label.size() != pred.size() || label.empty() || pred.empty()) {
     return AUC_ERROR;
   }

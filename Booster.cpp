@@ -46,11 +46,11 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
   // 每个task的label和pred分开存储
   vector<vector<int>> labels(dataset.get_task_num() + 1);
   vector<int> task = dataset.get_task_data();
-  vector<int> label = dataset.get_label_data();
+  vector<float> label = dataset.get_label_data();
 
-  vector<vector<int>> eval_labels(eval_set.get_task_num() + 1);
+  vector<vector<float>> eval_labels(eval_set.get_task_num() + 1);
   vector<int> eval_task = eval_set.get_task_data();
-  vector<int> eval_label = eval_set.get_label_data();
+  vector<float> eval_label = eval_set.get_label_data();
 
   // 每个task最优迭代次数的预测结果，当early stop后preds中对应task的值将不再更新
   vector<vector<float>> best_preds(dataset.get_task_num() + 1);
@@ -340,7 +340,7 @@ int Booster<LOSS, UPDATER>::single_predict(const Dataset &dataset,
 }
 
 template<typename LOSS, typename UPDATER>
-int Booster<LOSS, UPDATER>::calculate_loss_score(const vector<int> &label,
+int Booster<LOSS, UPDATER>::calculate_loss_score(const vector<float> &label,
                                                  const vector<float> &pred,
                                                  const string &eval_metric,
                                                  const int &task_id,

@@ -22,7 +22,7 @@ int Dataset::load_data_from_file(const string &file_name, const char *delimiter)
       this->data[i].push_back(tmp);
     }
     // store the label and the task;
-    this->label.push_back(atoi(split_result[this->feature_size].c_str()));
+    this->label.push_back(atof(split_result[this->feature_size].c_str()));
     this->task.push_back(atoi(split_result[this->feature_size + 1].c_str()));
   }
 
@@ -59,7 +59,7 @@ int Dataset::get_sample_by_index(vector<int> &index,
 
 int Dataset::get_data_by_tasks(vector<Dataset> &datasets) const {
   vector<Matrix> data(this->task_num + 1);
-  vector<vector<int>> labels(this->task_num + 1);
+  vector<vector<float>> labels(this->task_num + 1);
   vector<vector<int>> tasks(this->task_num + 1);
   vector<Matrix> gradients(this->task_num + 1);
   vector<Matrix> tmp_data(this->task_num + 1);
@@ -105,7 +105,7 @@ int Dataset::get_data_by_tasks(vector<Dataset> &datasets) const {
 
 int Dataset::get_data_by_index(vector<int> &index, Dataset &dataset) const {
   vector<vector<float>> used_data;
-  vector<int> used_label;
+  vector<float> used_label;
   vector<int> used_task;
   for (int i = 0; i < this->feature_size; i++) {
     vector<float> tmp;

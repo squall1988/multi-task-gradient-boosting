@@ -38,7 +38,7 @@ class Booster {
   // 对每个task单独预测
   int single_predict(const Dataset &dataset, vector<float> &pred, const int &task_id, float &loss_score);
   // calculate loss score
-  int calculate_loss_score(const vector<int> &label,
+  int calculate_loss_score(const vector<float> &label,
                            const vector<float> &pred,
                            const string &eval_metric,
                            const int &task_id,
