@@ -46,7 +46,7 @@ int boost(int max_num_round,
   Dataset data = load_dataset(path, feature_size, task_num);
   int n_splits = 5;
 //  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split_by_size(n_splits, 50, 5000, 377);
-  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.8, 377);
+  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.2, 377);
   Matrix scores;
   for (int i = 0; i < n_splits; ++i) {
     booster.train(datasets[i].first, datasets[i].second, eval_metric, early_stopping_rounds, false);
