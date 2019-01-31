@@ -46,7 +46,7 @@ int boost(int max_num_round,
   Dataset data = load_dataset(path, feature_size, task_num);
   int n_splits = 5;
 //  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split_by_size(n_splits, 50, 5000, 377);
-  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.2, 377);
+  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.1, 377);
   Matrix scores;
   for (int i = 0; i < n_splits; ++i) {
     booster.train(datasets[i].first, datasets[i].second, eval_metric, early_stopping_rounds, false);
@@ -174,7 +174,7 @@ int single_test_boost() {
   string log_path = "/Users/squall/work/tree/multi-task-gradient-boosting/sarcos_logs";
   string path = "/Users/squall/work/tree/multi-task-gradient-boosting/data/sarcos.txt";
   int max_num_round = 10;
-  vector<int> common_num_rounds{5};
+  vector<int> common_num_rounds{0};
   vector<float> betas{0, 0.001, 1.0};
   vector<int> early_stopping_rounds{0};
   float learning_rate = 0.1;
@@ -193,8 +193,52 @@ int single_test_boost() {
   );
 }
 
+
+
+int single_school_boost() {
+  string eval_metric = "nrmse";
+  string dataset_name = "school";
+  int feature_size = 28;
+  int task_num = 139;
+  string log_path = "/Users/squall/work/tree/multi-task-gradient-boosting/school_logs";
+  string path = "/Users/squall/work/tree/multi-task-gradient-boosting/data/school.txt";
+  int max_num_round = 10;
+  vector<int> common_num_rounds{0};
+  vector<float> betas{0, 0.001, 1.0};
+  vector<int> early_stopping_rounds{0};
+  float learning_rate = 0.05;
+  boost(max_num_round,
+        common_num_rounds[0],
+        betas[1],
+        early_stopping_rounds[0],
+        eval_metric,
+        dataset_name,
+        log_path,
+        path,
+        feature_size,
+        task_num,
+        learning_rate,
+        "variance"
+  );
+}
+
+
+int test_class_boost() {
+  vector<int> common_num_rounds{0};
+  vector<float> betas{0, 0.001, 1.0};
+  vector<int> early_stopping_rounds{0};
+  float learning_rate = 0.1;
+  Booster<LogisticLoss, MultiTaskUpdater>
+      booster(20, 10, 5, 0.1, betas[0], 10, learning_rate, "variance");
+  Dataset data = load_dataset("/Users/squall/work/tree/data/xijue_data.txt", 263, 4);
+  booster.train(data, data, "auc", 4, false);
+
+}
+
 int main() {
 //  test_boost();
-  single_test_boost();
+//  single_test_boost();
+//  single_school_boost();
+  test_class_boost();
   return 0;
 }
