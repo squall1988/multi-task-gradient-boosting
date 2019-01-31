@@ -47,6 +47,11 @@ class Dataset {
                                                const float &test_size,
                                                const int &random_state) const;
 
+  vector<pair<Dataset, Dataset>> shuffle_split_by_size(const int n_splits,
+                        const int train_size,
+                        const int test_size,
+                        const int random_state) const;
+
   /*! \belief: split data into train and test set. */
   pair<Dataset, Dataset> train_test_split(const float &test_size, const int &random_state) const;
 

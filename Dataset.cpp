@@ -25,6 +25,8 @@ int Dataset::load_data_from_file(const string &file_name, const char *delimiter)
     this->label.push_back(atof(split_result[this->feature_size].c_str()));
     this->task.push_back(atoi(split_result[this->feature_size + 1].c_str()));
   }
+  cout << "successful load data" << endl;
+  cout << "dataset size is : " << data_size << endl;
 
 #ifdef DEBUG
   for (int i = 0; i < label.size(); ++i) {
@@ -138,6 +140,28 @@ vector<pair<Dataset, Dataset>> Dataset::shuffle_split(const int &n_splits,
   }
   return datasets;
 }
+
+vector<pair<Dataset, Dataset>> Dataset::shuffle_split_by_size(const int n_splits,
+                                                              const int train_size,
+                                                              const int test_size,
+                                                              const int random_state) const {
+  vector<pair<Dataset, Dataset>> datasets;
+  for (int i = 0; i < n_splits; ++i) {
+    common::Random random(random_state);
+    vector<int> train_index = random.Sample(train_size*this->task_num, this->dataset_size);
+    vector<int> test_index = random.Sample(test_size*this->task_num, this->dataset_size);
+
+    Dataset train(this->get_feature_size());
+    Dataset test(this->get_feature_size());
+    train.set_task_num(this->get_task_num());
+    test.set_task_num(this->get_task_num());
+    this->get_data_by_index(train_index, train);
+    this->get_data_by_index(test_index, test);
+    datasets.push_back(make_pair(train, test));
+  }
+  return datasets;
+};
+
 
 pair<Dataset, Dataset> Dataset::train_test_split(const float &test_size, const int &random_state) const {
   int n = this->get_data_size();

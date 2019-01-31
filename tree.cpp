@@ -90,7 +90,7 @@ int Tree::train(Dataset const &dataset) {
     if (this->learning_rate > 0) {
 //      cout << "this is weight: " << tmp->get_weight() << endl;
       tmp->set_weight(tmp->get_weight() * (this->learning_rate));
-      cout << "leaf node weight : " << tmp->get_weight() << endl;
+//      cout << "leaf node weight : " << tmp->get_weight() << endl;
     }
     node_queue.pop();
   }
