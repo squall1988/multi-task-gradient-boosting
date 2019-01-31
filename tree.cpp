@@ -14,6 +14,7 @@ int Tree::train(Dataset const &dataset) {
   for (int i = 0; i < dataset.get_label_data().size(); ++i) {
     sample_index.push_back(i);
   }
+  cout << "begin generate root node" << endl;
   root = new Node(sample_index, NULL, this->objective, this->min_sample_num);
   root->calc_node_score(dataset.get_gradients(), lambda);
   if (dataset.get_task_num() > 1) {
@@ -23,6 +24,7 @@ int Tree::train(Dataset const &dataset) {
     root->find_split_point(dataset, lambda);
   }
   root->set_is_leaf(false);
+  cout << "end generate root node" << endl;
   queue<Node *> node_queue;
   if (root->get_left_node() != NULL)
     node_queue.push(root->get_left_node());
@@ -66,6 +68,9 @@ int Tree::train(Dataset const &dataset) {
           tmp->set_is_leaf(true);
         }
       }
+      if (tmp != NULL) {
+        nodes.push_back(tmp);
+      }
       node_queue.pop();
     }
   }
@@ -85,10 +90,22 @@ int Tree::train(Dataset const &dataset) {
     if (this->learning_rate > 0) {
 //      cout << "this is weight: " << tmp->get_weight() << endl;
       tmp->set_weight(tmp->get_weight() * (this->learning_rate));
+      cout << "leaf node weight : " << tmp->get_weight() << endl;
     }
     node_queue.pop();
   }
-  return TREE_TRAIN_ERROR;
+
+#ifdef DEBUG
+  cout << "train tree over" << endl;
+  for(int i = 0; i < nodes.size(); i++) {
+    if (nodes[i] != NULL) {
+      if (nodes[i]->get_is_leaf()) {
+        cout << nodes[i]->get_weight() << endl;
+      }
+    }
+  }
+#endif
+  return 0;
 }
 
 int Tree::predict(const Dataset &dataset, vector<float> &pred) {

@@ -90,6 +90,7 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
       eval_pred[j] += eval_pred_result[j];
       eval_preds[eval_task[j]].push_back(eval_pred[j]);
     }
+
     // 判断本次迭代是否满足early stop条件
     for (int j = 1; j <= dataset.get_task_num(); ++j) {
       if (flag[j]) {

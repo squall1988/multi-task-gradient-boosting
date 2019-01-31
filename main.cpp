@@ -39,9 +39,10 @@ int boost(int max_num_round,
           string path,
           int feature_size,
           int task_num,
+          float learning_rate,
           string regularization) {
   Booster<LinearLoss, MultiTaskUpdater>
-      booster(max_num_round, common_num_round, 5, 0.1, beta, 10, 0.05, regularization);
+      booster(max_num_round, common_num_round, 5, 0.1, beta, 10, learning_rate, regularization);
   Dataset data = load_dataset(path, feature_size, task_num);
   int n_splits = 5;
   vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.6, 377);
@@ -119,6 +120,7 @@ int test_boost() {
         path,
         feature_size,
         task_num,
+        0.05,
         "false");
   boost(100,
         100,
@@ -130,6 +132,7 @@ int test_boost() {
         path,
         feature_size,
         task_num,
+        0.05,
         "false");
 
   for (int k = 0; k < max_common_num_round.size(); ++k) {
@@ -143,6 +146,7 @@ int test_boost() {
           path,
           feature_size,
           task_num,
+          0.05,
           "entropy"
     );
     boost(100,
@@ -155,6 +159,7 @@ int test_boost() {
           path,
           feature_size,
           task_num,
+          0.05,
           "variance"
     );
   }
@@ -165,12 +170,13 @@ int single_test_boost() {
   string dataset_name = "sarcos";
   int feature_size = 21;
   int task_num = 7;
-  string log_path = "/Users/squall/work/tree/multi-task-gradient-boosting/logs/";
+  string log_path = "/Users/squall/work/tree/multi-task-gradient-boosting/sarcos_logs";
   string path = "/Users/squall/work/tree/multi-task-gradient-boosting/data/sarcos.txt";
-  int max_num_round = 100;
-  vector<int> common_num_rounds{100};
+  int max_num_round = 10;
+  vector<int> common_num_rounds{5};
   vector<float> betas{0, 0.001, 1.0};
   vector<int> early_stopping_rounds{0};
+  float learning_rate = 0.1;
   boost(max_num_round,
         common_num_rounds[0],
         betas[1],
@@ -181,6 +187,7 @@ int single_test_boost() {
         path,
         feature_size,
         task_num,
+        learning_rate,
         "variance"
   );
 }

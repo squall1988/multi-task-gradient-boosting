@@ -159,7 +159,7 @@ class Node {
   //  store the feature num.
   int feature_index;
   //  if this is a leaf Node.
-  bool is_leaf;
+  bool is_leaf = false;
   Node *left = NULL;
   Node *right = NULL;
   /*! \belief: score function; */

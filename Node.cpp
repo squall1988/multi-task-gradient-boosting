@@ -46,7 +46,7 @@ int Node::calc_node_weight(const Matrix &gradients, float lambda) {
     sum_g += gradients[this->sample_index[i]][0];
     sum_h += gradients[this->sample_index[i]][1];
   }
-//  cout<<sum_g<<" "<<sum_h<<endl;
+//  cout<<"This is : " << sum_g<<", this is sum_h: "<<sum_h<<endl;
   this->weight = -sum_g / (sum_h + lambda);
 //  cout<<"leaf weight: "<<this->weight<<endl;
   return SUCCESS;
@@ -489,7 +489,9 @@ int Node::entropy_regularization(const vector<float> &task_gains, float &reg) {
   reg = z;
 }
 
+
 int Node::generate_node(const vector<float> &feature, float cut_points) {
+
   vector<int> left_node_sample;
   vector<int> right_node_sample;
   if (feature.size() != this->sample_index.size() || feature.size() == 0) {
@@ -501,8 +503,8 @@ int Node::generate_node(const vector<float> &feature, float cut_points) {
   }
   Node *left_node = NULL;
   Node *right_node = NULL;
-//  cout<<left_node_sample.size()<<" "<<right_node_sample.size()<<endl;
   if (left_node_sample.size() != 0 && right_node_sample.size() != 0) {
+    // 没问题，只有当两个叶子结点都样本的时候才能进行分裂，否则就不分裂了。
     left_node = new Node(left_node_sample, this, this->score_obj, this->min_sample_num);
     right_node = new Node(right_node_sample, this, this->score_obj, this->min_sample_num);
   }

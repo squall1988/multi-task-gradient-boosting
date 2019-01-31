@@ -42,5 +42,6 @@ class Tree {
   int min_sample_num;
   float learning_rate;
   string regularization;
+  vector<Node *> nodes;
 };
 #endif //MTREE_TREE_H
