@@ -36,7 +36,7 @@ class Node {
   int find_split_point(Dataset const &data, float lambda);
   /*! \belief: find best split point for each feature. */
   int find_split_point_single_feature(const vector<float> &feature,
-                                      const vector<int> &label,
+                                      const vector<float> &label,
                                       const Matrix &gradients,
                                       float &cut_point,
                                       float &score,
@@ -45,7 +45,7 @@ class Node {
   int find_split_point_common(Dataset const &data, float lambda, float beta, string regularization);
   /*! \belief: find best split point for each feature. */
   int find_split_point_single_feature_common(const vector<float> &feature,
-                                             const vector<int> &label,
+                                             const vector<float> &label,
                                              const vector<int> &task,
                                              const vector<int> &data_sizes,
                                              const int &task_num,
@@ -57,7 +57,7 @@ class Node {
                                              string regularization);
 
   static int find_split_point_single_feature_static(const vector<float> &feature,
-                                                    const vector<int> &label,
+                                                    const vector<float> &label,
                                                     const Matrix &gradients,
                                                     const vector<int> &sample_index,
                                                     Updater *score_obj,
@@ -72,7 +72,7 @@ class Node {
   int find_split_point_thread(Dataset const &data, float lambda);
 
   static int find_split_point_single_feature_common_static(const vector<float> &feature,
-                                                           const vector<int> &label,
+                                                           const vector<float> &label,
                                                            const vector<int> &task,
                                                            const vector<int> &data_sizes,
                                                            const int &task_num,
@@ -85,12 +85,12 @@ class Node {
                                                            const float &beta,
                                                            const int &feature_index,
                                                            float *cut_point,
-                                                           float *score
-
+                                                           float *score,
+                                                           string regularization
   );
 
   /*! \belif: common train: find split point, multi thread version */
-  int find_split_point_common_thread(Dataset const &data, float lambda, float beta);
+  int find_split_point_common_thread(Dataset const &data, float lambda, float beta, string regularization);
 
   /*! \belief: stddev-based regularization. */
   static int stddev_regularization(const vector<float> &task_gains, float &reg);
@@ -99,7 +99,7 @@ class Node {
   static int entropy_regularization(const vector<float> &task_gains, float &reg);
 
   /*! \belief: find candidate split cut point by using weighted quantile sketch */
-  int find_candidate_split_feature_value(const vector<float> &feature,
+  static int find_candidate_split_feature_value(const vector<float> &feature,
                                          const Matrix &gradients,
                                          set<float> &candidate_cut_points);
 

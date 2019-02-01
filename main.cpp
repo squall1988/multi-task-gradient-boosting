@@ -41,18 +41,21 @@ int boost(int max_num_round,
           int task_num,
           float learning_rate,
           string regularization) {
+  clock_t start = clock();
+
   Booster<LinearLoss, MultiTaskUpdater>
       booster(max_num_round, common_num_round, 5, 0.1, beta, 10, learning_rate, regularization);
   Dataset data = load_dataset(path, feature_size, task_num);
-  int n_splits = 5;
+
+  int n_splits = 10;
 //  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split_by_size(n_splits, 50, 5000, 377);
-  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.1, 377);
+  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.25, 33);
   Matrix scores;
   for (int i = 0; i < n_splits; ++i) {
-    booster.train(datasets[i].first, datasets[i].second, eval_metric, early_stopping_rounds, false);
+    booster.train(datasets[i].first, datasets[i].first, eval_metric, early_stopping_rounds, false);
     vector<float> score;
     booster.predict(datasets[i].second, score, log_path);
-    scores.push_back(score);
+    scores.push_back(score);;
   }
   //calculate each task mean score
   Matrix scores_tran = transpose(scores);
@@ -89,99 +92,32 @@ int boost(int max_num_round,
   time_t now = time(NULL);
   cout << asctime(localtime(&now)) << eval_metric << " score:  " << avg_score / scores_tran.size() << endl;
   ofile << asctime(localtime(&now)) << eval_metric << " score:  " << avg_score / scores_tran.size() << endl;
+  clock_t finish = clock();
+  cout << "program cost time: " << (double)(finish - start)/CLOCKS_PER_SEC <<"seconds" << endl;
+  ofile << "program cost time: " << (double)(finish - start)/CLOCKS_PER_SEC <<"seconds" << endl;
   ofile << "------------------------------------------------" << endl;
   ofile.close();
   return SUCCESS;
 }
 
-int test_boost() {
-  vector<int> max_common_num_round{20, 30, 50, 70};
-  vector<float> betas{0.1};
-  string eval_metric = "nrmse";
-  string dataset_name = "school";
-//  string regularization = "entropy";
-  int feature_size = 28;
-  int task_num = 28;
-  // log output dir
-  //path for loading data
-//  string log_path = "/gruntdata/public/zebang.zhzb/work/tools/odps_clt/";
-//  string path = "/gruntdata/public/zebang.zhzb/work/tools/odps_clt/mt_data_40000.csv";
-
-  string log_path = "D:\\DLS\\Multi-task Learning\\project\\tree-model\\example-data\\" + dataset_name + "\\";
-  string path =
-      "D:\\DLS\\Multi-task Learning\\project\\tree-model\\example-data\\" + dataset_name + "\\data.csv";
-
-  boost(100,
-        0,
-        0,
-        0,
-        eval_metric,
-        dataset_name,
-        log_path,
-        path,
-        feature_size,
-        task_num,
-        0.05,
-        "false");
-  boost(100,
-        100,
-        0,
-        0,
-        eval_metric,
-        dataset_name,
-        log_path,
-        path,
-        feature_size,
-        task_num,
-        0.05,
-        "false");
-
-  for (int k = 0; k < max_common_num_round.size(); ++k) {
-    boost(100,
-          max_common_num_round[k],
-          0,
-          0,
-          eval_metric,
-          dataset_name,
-          log_path,
-          path,
-          feature_size,
-          task_num,
-          0.05,
-          "entropy"
-    );
-    boost(100,
-          max_common_num_round[k],
-          0.1,
-          0,
-          eval_metric,
-          dataset_name,
-          log_path,
-          path,
-          feature_size,
-          task_num,
-          0.05,
-          "variance"
-    );
-  }
-}
-
-int single_test_boost() {
+int single_sarcos_boost() {
   string eval_metric = "nrmse";
   string dataset_name = "sarcos";
   int feature_size = 21;
   int task_num = 7;
-  string log_path = "/Users/squall/work/tree/multi-task-gradient-boosting/sarcos_logs";
-  string path = "/Users/squall/work/tree/multi-task-gradient-boosting/data/sarcos.txt";
-  int max_num_round = 10;
-  vector<int> common_num_rounds{0};
-  vector<float> betas{0, 0.001, 1.0};
-  vector<int> early_stopping_rounds{0};
-  float learning_rate = 0.1;
+  string log_path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\sarcos\\";
+  string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\sarcos\\sub_sarcos.csv";
+  int max_num_round = 500;
+  int common_num_round = 500;
+  float beta = 0;
+  int early_stopping_round = 10;
+  float learning_rate = 0.05;
+  string regularization = "entropy";
+
   boost(max_num_round,
-        common_num_rounds[0],
-        betas[1],
-        early_stopping_rounds[0],
+        common_num_round,
+        beta,
+        early_stopping_round,
         eval_metric,
         dataset_name,
         log_path,
@@ -189,28 +125,30 @@ int single_test_boost() {
         feature_size,
         task_num,
         learning_rate,
-        "variance"
+        regularization
   );
+  return SUCCESS;
 }
 
 
 
 int single_school_boost() {
-  string eval_metric = "nrmse";
+  string eval_metric = "rmse";
   string dataset_name = "school";
   int feature_size = 28;
   int task_num = 139;
-  string log_path = "/Users/squall/work/tree/multi-task-gradient-boosting/school_logs";
-  string path = "/Users/squall/work/tree/multi-task-gradient-boosting/data/school.txt";
-  int max_num_round = 10;
-  vector<int> common_num_rounds{0};
-  vector<float> betas{0, 0.001, 1.0};
-  vector<int> early_stopping_rounds{0};
+  string log_path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\";
+  string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\school.csv";
+  int max_num_round = 500;
+  int common_num_round = 500;
+  float beta = 0.01;
+  int early_stopping_round = 10;
   float learning_rate = 0.05;
+  string regularization = "variance";
   boost(max_num_round,
-        common_num_rounds[0],
-        betas[1],
-        early_stopping_rounds[0],
+        common_num_round,
+        beta,
+        early_stopping_round,
         eval_metric,
         dataset_name,
         log_path,
@@ -218,8 +156,9 @@ int single_school_boost() {
         feature_size,
         task_num,
         learning_rate,
-        "variance"
+        regularization
   );
+  return SUCCESS;
 }
 
 
@@ -232,13 +171,13 @@ int test_class_boost() {
       booster(20, 10, 5, 0.1, betas[0], 10, learning_rate, "variance");
   Dataset data = load_dataset("/Users/squall/work/tree/data/xijue_data.txt", 263, 4);
   booster.train(data, data, "auc", 4, false);
+  return SUCCESS;
 
 }
 
 int main() {
 //  test_boost();
-//  single_test_boost();
 //  single_school_boost();
-  test_class_boost();
+  single_sarcos_boost();
   return 0;
 }

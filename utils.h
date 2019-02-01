@@ -20,7 +20,7 @@
   return -1; \
 }
 
-#define THREAD_NUM 1
+#define THREAD_NUM 4
 
 namespace common {
 

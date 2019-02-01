@@ -22,7 +22,7 @@ int Node::calc_node_score(const Matrix &gradients, float lambda) {
 // calculate structure score of each task
 int Node::calc_node_scores(Dataset const &data, float lambda) {
   vector<vector<float>> used_data;
-  vector<int> used_label;
+  vector<float> used_label;
   vector<int> used_task;
   Matrix node_gradients;
   data.get_sample_by_index(this->sample_index, used_data, used_label, used_task, node_gradients);
@@ -54,7 +54,7 @@ int Node::calc_node_weight(const Matrix &gradients, float lambda) {
 
 int Node::find_split_point(Dataset const &data, float lambda) {
   vector<vector<float>> used_data;
-  vector<int> used_label;
+  vector<float> used_label;
   vector<int> used_task;
   Matrix node_gradients;
   data.get_sample_by_index(this->sample_index, used_data, used_label, used_task, node_gradients);
@@ -91,7 +91,7 @@ int Node::find_split_point(Dataset const &data, float lambda) {
 }
 
 int Node::find_split_point_single_feature(const vector<float> &feature,
-                                          const vector<int> &label,
+                                          const vector<float> &label,
                                           const Matrix &gradients,
                                           float &cut_point,
                                           float &score,
@@ -132,7 +132,7 @@ int Node::find_split_point_single_feature(const vector<float> &feature,
 
 int Node::find_split_point_common(Dataset const &data, float lambda, float beta, string regularization) {
   vector<vector<float>> used_data;
-  vector<int> used_label;
+  vector<float> used_label;
   vector<int> used_task;
   Matrix node_gradients;
   data.get_sample_by_index(this->sample_index, used_data, used_label, used_task, node_gradients);
@@ -181,7 +181,7 @@ int Node::find_split_point_common(Dataset const &data, float lambda, float beta,
 }
 
 int Node::find_split_point_single_feature_common(const vector<float> &feature,
-                                                 const vector<int> &label,
+                                                 const vector<float> &label,
                                                  const vector<int> &task,
                                                  const vector<int> &data_sizes,
                                                  const int &task_num,
@@ -251,7 +251,7 @@ int Node::find_split_point_single_feature_common(const vector<float> &feature,
 
 int Node::find_split_point_thread(Dataset const &data, float lambda) {
   vector<vector<float>> used_data;
-  vector<int> used_label;
+  vector<float> used_label;
   vector<int> used_task;
   Matrix node_gradients;
   data.get_sample_by_index(this->sample_index, used_data, used_label, used_task, node_gradients);
@@ -304,7 +304,7 @@ int Node::find_split_point_thread(Dataset const &data, float lambda) {
 }
 
 int Node::find_split_point_single_feature_static(const vector<float> &feature,
-                                                 const vector<int> &label,
+                                                 const vector<float> &label,
                                                  const Matrix &gradients,
                                                  const vector<int> &sample_index,
                                                  Updater *score_obj,
@@ -320,10 +320,16 @@ int Node::find_split_point_single_feature_static(const vector<float> &feature,
   for (int i = 0; i < feature.size(); i++) {
     unique_num.insert(feature[i]);
   }
+  set<float> candidate_cut_points;
+  if (unique_num.size() > 100) {
+    find_candidate_split_feature_value(feature, gradients, candidate_cut_points);
+  } else {
+    candidate_cut_points = unique_num;
+  }
 //  std::cout<<unique_num.size()<<" "<<feature.size()<<endl;
   float best_score = -1.0f;
   float best_cut_point = 0;
-  for (set<float>::iterator it = unique_num.begin(); it != unique_num.end(); ++it) {
+  for (set<float>::iterator it = candidate_cut_points.begin(); it != candidate_cut_points.end(); ++it) {
     float tmp = score_obj->get_score(feature, gradients,
                                      sample_index,
                                      *it, lambda
@@ -341,9 +347,9 @@ int Node::find_split_point_single_feature_static(const vector<float> &feature,
   return SUCCESS;
 }
 
-int Node::find_split_point_common_thread(Dataset const &data, float lambda, float beta) {
+int Node::find_split_point_common_thread(Dataset const &data, float lambda, float beta, string regularization) {
   vector<vector<float>> used_data;
-  vector<int> used_label;
+  vector<float> used_label;
   vector<int> used_task;
   Matrix node_gradients;
   data.get_sample_by_index(this->sample_index, used_data, used_label, used_task, node_gradients);
@@ -374,7 +380,8 @@ int Node::find_split_point_common_thread(Dataset const &data, float lambda, floa
                                       beta,
                                       i,
                                       cut_point,
-                                      score));
+                                      score,
+                                      regularization));
   }
   for (auto &&x: results) {
     if (x.get() != SUCCESS) {
@@ -406,7 +413,7 @@ int Node::find_split_point_common_thread(Dataset const &data, float lambda, floa
 }
 
 int Node::find_split_point_single_feature_common_static(const vector<float> &feature,
-                                                        const vector<int> &label,
+                                                        const vector<float> &label,
                                                         const vector<int> &task,
                                                         const vector<int> &data_sizes,
                                                         const int &task_num,
@@ -419,7 +426,8 @@ int Node::find_split_point_single_feature_common_static(const vector<float> &fea
                                                         const float &beta,
                                                         const int &feature_index,
                                                         float *cut_point,
-                                                        float *score) {
+                                                        float *score,
+                                                        string regularization) {
   if (feature.empty()) {
     return NODE_SAMPLE_EMPTY;
   }
@@ -427,12 +435,17 @@ int Node::find_split_point_single_feature_common_static(const vector<float> &fea
   for (int i = 0; i < feature.size(); i++) {
     unique_num.insert(feature[i]);
   }
-//  std::cout<<unique_num.size()<<" "<<feature.size()<<endl;
+  set<float> candidate_cut_points;
+  if (unique_num.size() > 100) {
+    find_candidate_split_feature_value(feature, gradients, candidate_cut_points);
+  } else {
+    candidate_cut_points = unique_num;
+  }
 
 
   float best_score = -1000.0f;
   float best_cut_point = 0;
-  for (set<float>::iterator it = unique_num.begin(); it != unique_num.end(); ++it) {
+  for (set<float>::iterator it = candidate_cut_points.begin(); it != candidate_cut_points.end(); ++it) {
     vector<float> tmp_scores = score_obj->get_scores(feature, gradients, task, task_num,
                                                      sample_index,
                                                      *it, lambda
@@ -448,9 +461,21 @@ int Node::find_split_point_single_feature_common_static(const vector<float> &fea
       tmp_gains[i - 1] = tmp_scores[i] - node_scores[i];
     }
     // current cut point score.
+
     float reg = 0.0f;
-    stddev_regularization(tmp_gains, reg);
-    float gain_score = raw_gain_score - beta * reg;
+    float gain_score = 0.0f;
+    if (regularization == "variance") {
+      stddev_regularization(tmp_gains, reg);
+      gain_score = raw_gain_score - beta * reg;
+    } else if (regularization == "entropy") {
+      entropy_regularization(tmp_gains, reg);
+      gain_score = reg * raw_gain_score;
+    } else if (regularization == "weight_entropy") {
+      entropy_regularization(tmp_gains, reg);
+      gain_score = (1 + beta * reg) * gain_score;
+    } else {
+      gain_score = raw_gain_score;
+    }
     if (gain_score > best_score) {
       best_score = gain_score;
       best_cut_point = *it;
