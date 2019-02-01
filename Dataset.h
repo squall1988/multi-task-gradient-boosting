@@ -31,13 +31,13 @@ class Dataset {
   int load_data_from_file(const string &file_name, const char *delimiter);
   /*! \belief: get sample by index. */
   int get_sample_by_index(vector<int> &index, vector<vector<float>> &selected_sample,
-                          vector<int> &selected_label, vector<int> &selected_task,
+                          vector<float> &selected_label, vector<int> &selected_task,
                           Matrix &selected_gradients) const;
 
   int get_data_by_index(vector<int> &index, Dataset &dataset) const;
 
   int get_sample_by_task(int task_id, vector<vector<float>> &selected_sample,
-                         vector<int> &selected_label, vector<int> &selected_task,
+                         vector<float> &selected_label, vector<int> &selected_task,
                          Matrix &selected_gradients) const;
 
   /*! \belief: split data by task_id. */

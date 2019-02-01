@@ -44,7 +44,7 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
   }
   // common training
   // 每个task的label和pred分开存储
-  vector<vector<int>> labels(dataset.get_task_num() + 1);
+  vector<vector<float>> labels(dataset.get_task_num() + 1);
   vector<int> task = dataset.get_task_data();
   vector<float> label = dataset.get_label_data();
 

@@ -46,7 +46,7 @@ set<float>& Dataset::get_unique_points(int feature_index) {
 
 int Dataset::get_sample_by_index(vector<int> &index,
                                  vector<vector<float>> &selected_sample,
-                                 vector<int> &selected_label,
+                                 vector<float> &selected_label,
                                  vector<int> &selected_task,
                                  Matrix &selected_gradients) const {
   // 这里的计算感觉是不需要的。
@@ -138,8 +138,6 @@ vector<pair<Dataset, Dataset>> Dataset::shuffle_split(const int &n_splits,
                                                       const float &test_size,
                                                       const int &random_state) const {
   vector<pair<Dataset, Dataset>> datasets;
-  int n = this->get_data_size();
-  int m = (int) ((float) (n) * test_size);
   common::Random seed(random_state);
   for (int i = 0; i < n_splits; ++i) {
     pair<Dataset, Dataset> p = train_test_split(test_size, seed.NextInt(1, 100));
