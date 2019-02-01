@@ -145,7 +145,6 @@ int Node::find_split_point_common(Dataset const &data, float lambda, float beta,
   float best_score = -1000.0f;
 //  std::cout<<this->node_score<<endl;
   for (int i = 0; i < data.get_feature_size(); ++i) {
-
     float cut_point, score;
     ERROR_CODE_CHECK(this->find_split_point_single_feature_common(used_data[i],
                                                                   used_label,
@@ -194,17 +193,20 @@ int Node::find_split_point_single_feature_common(const vector<float> &feature,
   if (feature.empty()) {
     return NODE_SAMPLE_EMPTY;
   }
+  cout << "go here" << endl;
   set<float> unique_num;
   for (int i = 0; i < feature.size(); i++) {
     unique_num.insert(feature[i]);
   }
   set<float> candidate_cut_points;
+  cout << " outof the count " << unique_num.size() << endl;
   if (unique_num.size() > 100) {
     this->find_candidate_split_feature_value(feature, gradients, candidate_cut_points);
   } else {
     candidate_cut_points = unique_num;
   }
 
+  cout << unique_num.size() << endl;
   float best_score = -1000.0f;
   float best_cut_point = 0;
   for (set<float>::iterator it = candidate_cut_points.begin(); it != candidate_cut_points.end(); ++it) {
@@ -520,12 +522,14 @@ int Node::get_sample_size() const {
 int Node::find_candidate_split_feature_value(const vector<float> &feature,
                                              const Matrix &gradients,
                                              set<float> &candidate_cut_points) {
+  cout << "go here" << endl;
   vector<pair<float, float>> d;
   for (int i = 0; i < feature.size(); ++i) {
     d.emplace_back(make_pair(feature[i], gradients[i][1]));
   }
   // sort by feature value
   sort(d.begin(), d.end(), cmp);
+  cout << "go here 1" << endl;
   float sum_h = 0.0f;
   for (int i = 0; i < d.size(); ++i) {
     sum_h += d[i].second;

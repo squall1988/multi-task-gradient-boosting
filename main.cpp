@@ -223,22 +223,22 @@ int single_school_boost() {
 }
 
 
-int test_class_boost() {
+int test_class_boost(const string& data_path) {
   vector<int> common_num_rounds{0};
   vector<float> betas{0, 0.001, 1.0};
   vector<int> early_stopping_rounds{0};
   float learning_rate = 0.1;
   Booster<LogisticLoss, MultiTaskUpdater>
       booster(20, 10, 5, 0.1, betas[0], 10, learning_rate, "variance");
-  Dataset data = load_dataset("/Users/squall/work/tree/data/xijue_data.txt", 263, 4);
+  Dataset data = load_dataset(data_path, 263, 4);
   booster.train(data, data, "auc", 4, false);
 
 }
 
-int main() {
+int main(int argc, const char** argv) {
 //  test_boost();
 //  single_test_boost();
 //  single_school_boost();
-  test_class_boost();
+  test_class_boost(argv[1]);
   return 0;
 }

@@ -24,6 +24,7 @@ class Dataset {
       vector<float> feature;
       this->data.push_back(feature);
     }
+    this->candidate_cut_points.resize(feature_size);
 
   }
   /*! \belief: get sample from the file */
@@ -91,6 +92,9 @@ class Dataset {
   const Matrix &get_data() const {
     return this->data;
   }
+
+  set<float>& get_unique_points(int feature_index);
+
  private:
   Matrix data;
   int feature_size;
@@ -99,6 +103,8 @@ class Dataset {
   vector<float> label;
   vector<int> task;
   Matrix gradients;
+  vector<set<float>> candidate_cut_points;
+
 
 };
 

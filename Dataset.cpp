@@ -19,6 +19,7 @@ int Dataset::load_data_from_file(const string &file_name, const char *delimiter)
     assert(split_result.size() == this->feature_size + 2);
     for (int i = 0; i < this->feature_size; i++) {
       float tmp = (float) atof(split_result[i].c_str());
+      this->candidate_cut_points[i].insert(tmp);
       this->data[i].push_back(tmp);
     }
     // store the label and the task;
@@ -38,11 +39,17 @@ int Dataset::load_data_from_file(const string &file_name, const char *delimiter)
   return 0;
 }
 
+set<float>& Dataset::get_unique_points(int feature_index) {
+  return this->candidate_cut_points[feature_index];
+}
+
+
 int Dataset::get_sample_by_index(vector<int> &index,
                                  vector<vector<float>> &selected_sample,
                                  vector<int> &selected_label,
                                  vector<int> &selected_task,
                                  Matrix &selected_gradients) const {
+  // 这里的计算感觉是不需要的。
   for (int i = 0; i < this->feature_size; i++) {
     vector<float> tmp;
     for (int j = 0; j < index.size(); j++) {
