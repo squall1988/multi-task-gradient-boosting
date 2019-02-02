@@ -1,6 +1,22 @@
 # multi-task-gradient-boosting
 
-# Parameter Guide
+# Usage
+Refer run experiment code. If you want to split csv file into n pairs(training data and test data), run './lightgbm_experiment/data_transformer.py', which can both generate csv format and mat format for experiment.
+
+# Run Experiment Code
++ lightgbm_experiment
+    + run TestLightgbm.py
++ MALSAR_experiment
+    + rMTFL: run example_rMTFL.m
+    + Lasso: run example_Lasso.m
+    + Trace: run example_Trace.m
++ VSTG-MTL_experiment
+    + run demo.m
+    
++ Multi-Task GBDT
+    + run main.cpp
+
+# Parameter Guide for Multi-Task GBDT 
 + log_path: The file path for storing log
 + path: The path of dataset
 + eval_metric: evaluation for performance
@@ -11,5 +27,13 @@
 + common_num_round: The max iterations of common training stage
 + regularization: The regularization of gain score (options: entropy, variance)
 + beta: The coefficient of variance (The value is zero for entropy-based method)
-+ early_stopping_round: Just like xgboost (0 indicate does not use it, default value is 10)
-+ THREAD_NUM: The number of parallel threads (modify at utils.h, default value is 4)
++ early_stopping_round: like xgboost (0 indicate does not use it, default value is 10)
+
+# Experiment Results
+Results from the real datasets for RMSE over 10 repetitions. The statistically best model is highlighted in bold.
+
+(Independent-Lightgbm: Train T models for T tasks, Aggregate-Lightgbm: Train one model for T tasks(regard T tasks as one task))
+
+|Dataset|Measure|Trace|LASSO|rMTFL|VSTG-MTL|Independent-Lightgbm|Aggregate-Lightgbm|Variance-based Multi-Task GBDT|Entropy-based Multi-Task GBDT|
+|---|:---:|---:|:---:|---:|:---:|---:|:---:|---:|:---:|
+|school|RMSE|11.45|11.21|10.46|9.95|11.19|10.04|**9.68**|9.76|
