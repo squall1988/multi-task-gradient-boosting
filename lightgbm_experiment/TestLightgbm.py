@@ -24,7 +24,7 @@ def repetition(df, n_splits, test_size, eval_metric):
     for train_index, test_index in ss.split(X):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
-        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=500, min_child_samples=1, random_state=33,n_jobs=-1)
+        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=100, min_child_samples=1, random_state=33,n_jobs=-1)
         gbm.fit(X_train,y_train)
         y_pred = gbm.predict(X_test)
         if eval_metric == 'rmse':
@@ -74,7 +74,7 @@ def repetition_agg(list, n_splits, test_size, eval_metric):
             y_train_agg[cnt:cnt+len(t)] = t
             cnt += t.shape[0]
 
-        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=500, min_child_samples=1, random_state=33, n_jobs=-1)
+        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=100, min_child_samples=1, random_state=33, n_jobs=-1)
         gbm.fit(X_train_agg, y_train_agg)
         y_test_set.append(y_test_list)
         for test in X_test_list:
