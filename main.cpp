@@ -143,7 +143,7 @@ int single_school_boost() {
   float beta = 0.01;
   int early_stopping_round = 10;
   float learning_rate = 0.05;
-  string regularization = "entropy";
+  string regularization = "variance";
   boost(max_num_round,
         common_num_round,
         beta,
