@@ -6,7 +6,6 @@
 #include <iostream>
 #include "Dataset.h"
 
-
 int Dataset::load_data_from_file(const string &file_name, const char *delimiter) {
   ifstream in_file(file_name);
   string line;
@@ -16,18 +15,25 @@ int Dataset::load_data_from_file(const string &file_name, const char *delimiter)
     // split the line and transform the data to float, insert into the data.
     vector<string> split_result = common::Split(line, *delimiter);
 //    std::cout<<split_result.size()<<" "<<this->feature_size<<endl;
-    assert(split_result.size() == this->feature_size + 2);
-    for (int i = 0; i < this->feature_size; i++) {
+    assert(split_result.size() == this->max_size + 2);
+    for (int i = 0; i < this->max_size; i++) {
       float tmp = (float) atof(split_result[i].c_str());
       this->candidate_cut_points[i].insert(tmp);
       this->data[i].push_back(tmp);
     }
     // store the label and the task;
-    this->label.push_back(atof(split_result[this->feature_size].c_str()));
-    this->task.push_back(atoi(split_result[this->feature_size + 1].c_str()));
+    this->label.push_back(atof(split_result[this->max_size].c_str()));
+    this->task.push_back(atoi(split_result[this->max_size + 1].c_str()));
   }
   cout << "successful load data" << endl;
   cout << "dataset size is : " << data_size << endl;
+  for (int i = 0; i < this->candidate_cut_points.size(); ++i) {
+    cout << "This is feature "
+         << i
+         << " unique data num "
+         << this->candidate_cut_points[i].size()
+         << endl;
+  }
 
 #ifdef DEBUG
   for (int i = 0; i < label.size(); ++i) {
@@ -39,10 +45,9 @@ int Dataset::load_data_from_file(const string &file_name, const char *delimiter)
   return 0;
 }
 
-set<float>& Dataset::get_unique_points(int feature_index) {
+set<float> &Dataset::get_unique_points(int feature_index) {
   return this->candidate_cut_points[feature_index];
 }
-
 
 int Dataset::get_sample_by_index(vector<int> &index,
                                  vector<vector<float>> &selected_sample,
@@ -50,7 +55,7 @@ int Dataset::get_sample_by_index(vector<int> &index,
                                  vector<int> &selected_task,
                                  Matrix &selected_gradients) const {
   // 这里的计算感觉是不需要的。
-  for (int i = 0; i < this->feature_size; i++) {
+  for (int i = 0; i < this->common_feature_size; i++) {
     vector<float> tmp;
     for (int j = 0; j < index.size(); j++) {
       tmp.push_back(this->data[i][index[j]]);
@@ -76,14 +81,14 @@ int Dataset::get_data_by_tasks(vector<Dataset> &datasets) const {
   // 存储方式：一行一个sample
   for (int i = 0; i < this->dataset_size; ++i) {
     vector<float> tmp;
-    for (int j = 0; j < this->feature_size; ++j) {
+    for (int j = 0; j < this->common_feature_size; ++j) {
       tmp.push_back(this->data[j][i]);
     }
     tmp_data[this->task[i]].push_back(tmp);
   }
   // 存储方式改为一行一个feature
   for (int i = 1; i <= this->task_num; ++i) {
-    for (int j = 0; j < this->feature_size; ++j) {
+    for (int j = 0; j < this->common_feature_size; ++j) {
       vector<float> tmp;
       for (int k = 0; k < tmp_data[i].size(); ++k) {
         tmp.push_back(tmp_data[i][k][j]);
@@ -116,7 +121,7 @@ int Dataset::get_data_by_index(vector<int> &index, Dataset &dataset) const {
   vector<vector<float>> used_data;
   vector<float> used_label;
   vector<int> used_task;
-  for (int i = 0; i < this->feature_size; i++) {
+  for (int i = 0; i < this->common_feature_size; i++) {
     vector<float> tmp;
     for (int j = 0; j < index.size(); j++) {
       tmp.push_back(this->data[i][index[j]]);
@@ -153,11 +158,11 @@ vector<pair<Dataset, Dataset>> Dataset::shuffle_split_by_size(const int n_splits
   vector<pair<Dataset, Dataset>> datasets;
   for (int i = 0; i < n_splits; ++i) {
     common::Random random(random_state);
-    vector<int> train_index = random.Sample(train_size*this->task_num, this->dataset_size);
-    vector<int> test_index = random.Sample(test_size*this->task_num, this->dataset_size);
+    vector<int> train_index = random.Sample(train_size * this->task_num, this->dataset_size);
+    vector<int> test_index = random.Sample(test_size * this->task_num, this->dataset_size);
 
-    Dataset train(this->get_feature_size());
-    Dataset test(this->get_feature_size());
+    Dataset train(this->get_common_feature_size(), this->get_task_num(), this->get_single_feature_size());
+    Dataset test(this->get_common_feature_size(), this->get_task_num(), this->get_single_feature_size());
     train.set_task_num(this->get_task_num());
     test.set_task_num(this->get_task_num());
     this->get_data_by_index(train_index, train);
@@ -166,7 +171,6 @@ vector<pair<Dataset, Dataset>> Dataset::shuffle_split_by_size(const int n_splits
   }
   return datasets;
 };
-
 
 pair<Dataset, Dataset> Dataset::train_test_split(const float &test_size, const int &random_state) const {
   int n = this->get_data_size();
@@ -185,8 +189,8 @@ pair<Dataset, Dataset> Dataset::train_test_split(const float &test_size, const i
     }
   }
 
-  Dataset train(this->get_feature_size());
-  Dataset test(this->get_feature_size());
+  Dataset train(this->get_common_feature_size(), this->get_task_num(), this->get_single_feature_size());
+  Dataset test(this->get_common_feature_size(), this->get_task_num(), this->get_single_feature_size());
   train.set_task_num(this->get_task_num());
   test.set_task_num(this->get_task_num());
   this->get_data_by_index(train_index, train);

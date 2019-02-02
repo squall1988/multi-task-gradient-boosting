@@ -62,7 +62,7 @@ int Node::find_split_point(Dataset const &data, float lambda) {
   float best_cut_point = -1.0f;
   float best_score = -1.0f;
 //  std::cout<<this->node_score<<endl;
-  for (int i = 0; i < data.get_feature_size(); ++i) {
+  for (int i = 0; i < data.get_common_feature_size(); ++i) {
     float cut_point, score;
     ERROR_CODE_CHECK(this->find_split_point_single_feature(used_data[i],
                                                            used_label,
@@ -144,7 +144,7 @@ int Node::find_split_point_common(Dataset const &data, float lambda, float beta,
   float best_cut_point = 0.0f;
   float best_score = -1000.0f;
 //  std::cout<<this->node_score<<endl;
-  for (int i = 0; i < data.get_feature_size(); ++i) {
+  for (int i = 0; i < data.get_common_feature_size(); ++i) {
     float cut_point, score;
     ERROR_CODE_CHECK(this->find_split_point_single_feature_common(used_data[i],
                                                                   used_label,
@@ -193,7 +193,6 @@ int Node::find_split_point_single_feature_common(const vector<float> &feature,
   if (feature.empty()) {
     return NODE_SAMPLE_EMPTY;
   }
-  cout << "go here" << endl;
   set<float> unique_num;
   for (int i = 0; i < feature.size(); i++) {
     unique_num.insert(feature[i]);
@@ -262,9 +261,9 @@ int Node::find_split_point_thread(Dataset const &data, float lambda) {
   float best_score = -1.0f;
   ThreadPool pool(THREAD_NUM);
   std::vector<std::future<int> > results;
-  auto *cut_point = new float[data.get_feature_size()]();
-  auto *score = new float[data.get_feature_size()]();
-  for (int i = 0; i < data.get_feature_size(); ++i) {
+  auto *cut_point = new float[data.get_common_feature_size()]();
+  auto *score = new float[data.get_common_feature_size()]();
+  for (int i = 0; i < data.get_common_feature_size(); ++i) {
     results.emplace_back(pool.enqueue(Node::find_split_point_single_feature_static,
                                       used_data[i],
                                       used_label,
@@ -282,7 +281,7 @@ int Node::find_split_point_thread(Dataset const &data, float lambda) {
       return NODE_SPLIT_ERROR;
     }
   }
-  for (int i = 0; i < data.get_feature_size(); ++i) {
+  for (int i = 0; i < data.get_common_feature_size(); ++i) {
     if (score[i] > best_score) {
       best_score = score[i];
       best_feature = i;
@@ -364,9 +363,9 @@ int Node::find_split_point_common_thread(Dataset const &data, float lambda, floa
   float best_score = -1000.0f;
   ThreadPool pool(THREAD_NUM);
   std::vector<std::future<int> > results;
-  auto *cut_point = new float[data.get_feature_size()]();
-  auto *score = new float[data.get_feature_size()]();
-  for (int i = 0; i < data.get_feature_size(); ++i) {
+  auto *cut_point = new float[data.get_common_feature_size()]();
+  auto *score = new float[data.get_common_feature_size()]();
+  for (int i = 0; i < data.get_common_feature_size(); ++i) {
     results.emplace_back(pool.enqueue(Node::find_split_point_single_feature_common_static,
                                       used_data[i],
                                       used_label,
@@ -390,7 +389,7 @@ int Node::find_split_point_common_thread(Dataset const &data, float lambda, floa
       return NODE_SPLIT_ERROR;
     }
   }
-  for (int i = 0; i < data.get_feature_size(); ++i) {
+  for (int i = 0; i < data.get_common_feature_size(); ++i) {
     if (score[i] > best_score) {
       best_score = score[i];
       best_feature = i;
@@ -498,6 +497,7 @@ int Node::stddev_regularization(const vector<float> &task_gains, float &reg) {
     variance += (*it - mean) * (*it - mean);
   }
   reg = variance / (task_gains.size() - 1);
+  return SUCCESS;
 }
 
 int Node::entropy_regularization(const vector<float> &task_gains, float &reg) {
@@ -514,6 +514,7 @@ int Node::entropy_regularization(const vector<float> &task_gains, float &reg) {
     z -= (*it / gain_sum) * std::log(*it / gain_sum);
   }
   reg = z;
+  return SUCCESS;
 }
 
 
@@ -538,6 +539,7 @@ int Node::generate_node(const vector<float> &feature, float cut_points) {
 //  cout<<left_node_sample.size()<< " " <<right_node_sample.size()<<endl;
   this->right = right_node;
   this->left = left_node;
+  return SUCCESS;
 }
 
 int Node::get_sample_size() const {
@@ -547,14 +549,13 @@ int Node::get_sample_size() const {
 int Node::find_candidate_split_feature_value(const vector<float> &feature,
                                              const Matrix &gradients,
                                              set<float> &candidate_cut_points) {
-  cout << "go here" << endl;
   vector<pair<float, float>> d;
   for (int i = 0; i < feature.size(); ++i) {
     d.emplace_back(make_pair(feature[i], gradients[i][1]));
   }
   // sort by feature value
   sort(d.begin(), d.end(), cmp);
-  cout << "go here 1" << endl;
+//  cout << "go here 1" << endl;
   float sum_h = 0.0f;
   for (int i = 0; i < d.size(); ++i) {
     sum_h += d[i].second;

@@ -60,6 +60,9 @@ class Booster {
   vector<vector<Tree *>> single_trees;
   vector<pair<int, float> > commmon_best_iterations;
   vector<pair<int, float> > single_best_iterations;
+  vector<int> single_feature_size;
+  int commone_feature_size;
+  int task_num;
 };
 
 #endif //MTREE_BOOSTER_H

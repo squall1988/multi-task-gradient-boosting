@@ -23,7 +23,7 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
       new Tree(max_depth,
                lambda,
                beta,
-               dataset.get_feature_size(),
+               dataset.get_common_feature_size(),
                min_sample_leaf,
                learning_rate,
                regularization,
@@ -134,7 +134,7 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
         new Tree(max_depth,
                  lambda,
                  beta,
-                 dataset.get_feature_size(),
+                 dataset.get_common_feature_size(),
                  min_sample_leaf,
                  learning_rate,
                  regularization,
@@ -155,9 +155,11 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
   vector<Dataset> datasets;
   vector<Dataset> eval_datasets;
   for (int i = 0; i < dataset.get_task_num(); ++i) {
-    Dataset tmp_dataset(dataset.get_feature_size());
+    Dataset tmp_dataset(dataset.get_common_feature_size(), dataset.get_task_num(),
+                        dataset.get_single_feature_size());
     datasets.push_back(tmp_dataset);
-    Dataset tmp_eval_dataset(eval_set.get_feature_size());
+    Dataset tmp_eval_dataset(eval_set.get_common_feature_size(), eval_set.get_task_num(),
+    eval_set.get_single_feature_size());
     eval_datasets.push_back(tmp_eval_dataset);
   }
   dataset.get_data_by_tasks(datasets);
@@ -252,7 +254,7 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
           new Tree(max_depth,
                    lambda,
                    beta,
-                   dataset.get_feature_size(),
+                   dataset.get_single_feature_size(i),
                    min_sample_leaf,
                    learning_rate,
                    regularization,
@@ -282,7 +284,8 @@ template<typename LOSS, typename UPDATER>
 int Booster<LOSS, UPDATER>::predict(Dataset &dataset, vector<float> &score, const string &log_path) {
   vector<Dataset> datasets;
   for (int i = 0; i < dataset.get_task_num(); ++i) {
-    Dataset tmp_dataset(dataset.get_feature_size());
+    Dataset tmp_dataset(dataset.get_common_feature_size(), dataset.get_task_num(),
+                        dataset.get_single_feature_size());
     datasets.push_back(tmp_dataset);
   }
   dataset.get_data_by_tasks(datasets);

@@ -19,14 +19,22 @@ using namespace common;
 
 class Dataset {
  public:
-  Dataset(int feature_size) : feature_size(feature_size) {
+  Dataset(int feature_size, int task_num, const vector<int> &single_feature_size) :
+      common_feature_size(feature_size), task_num(task_num){
     for (int i = 0; i < feature_size; i++) {
       vector<float> feature;
       this->data.push_back(feature);
     }
     this->candidate_cut_points.resize(feature_size);
-
+    this->single_feature_size = single_feature_size;
+    this->max_size = 0;
+    for(int i = 0; i < single_feature_size.size(); ++i) {
+      if (single_feature_size[i] > this->max_size) {
+        this->max_size = single_feature_size[i];
+      }
+    }
   }
+
   /*! \belief: get sample from the file */
   int load_data_from_file(const string &file_name, const char *delimiter);
   /*! \belief: get sample by index. */
@@ -70,8 +78,8 @@ class Dataset {
     return this->gradients;
   }
 
-  int get_feature_size() const {
-    return this->feature_size;
+  int get_common_feature_size() const {
+    return this->common_feature_size;
   }
 
   int get_task_num() const {
@@ -79,6 +87,17 @@ class Dataset {
   }
   const vector<float> &get_label_data() const {
     return this->label;
+  }
+
+  const vector<int>& get_single_feature_size() const{
+    return this->single_feature_size;
+  }
+
+  int get_single_feature_size(int task_num) {
+    if (task_num > this->task_num) {
+      return -1;
+    }
+    return this->single_feature_size[task_num];
   }
 
   const vector<int> &get_task_data() {
@@ -97,13 +116,15 @@ class Dataset {
 
  private:
   Matrix data;
-  int feature_size;
+  int common_feature_size;
+  vector<int> single_feature_size;
   int dataset_size;
   int task_num;
   vector<float> label;
   vector<int> task;
   Matrix gradients;
   vector<set<float>> candidate_cut_points;
+  int max_size;
 
 
 };
