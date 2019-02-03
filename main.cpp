@@ -136,8 +136,8 @@ int single_school_boost() {
   string dataset_name = "school";
   int feature_size = 28;
   int task_num = 139;
-  string log_path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\";
-  string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\school_";
+  string log_path = "./log";
+  string path = "/Users/squall/work/tree/multi-task-gradient-boosting/data/school/school_";
   int max_num_round = 500;
   int common_num_round = 500;
   float beta = 0.01;
