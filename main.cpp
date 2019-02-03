@@ -43,18 +43,17 @@ int boost(int max_num_round,
           string regularization) {
   clock_t start = clock();
 
+  int n_splits = 10;
   Booster<LinearLoss, MultiTaskUpdater>
       booster(max_num_round, common_num_round, 5, 0.1, beta, 10, learning_rate, regularization);
-  Dataset data = load_dataset(path, feature_size, task_num);
-
-  int n_splits = 10;
-//  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split_by_size(n_splits, 50, 5000, 377);
-  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.25, 33);
+//  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.25, 33);
   Matrix scores;
   for (int i = 0; i < n_splits; ++i) {
-    booster.train(datasets[i].first, datasets[i].first, eval_metric, early_stopping_rounds, false);
+    Dataset train_data = load_dataset(path + "train_re" + to_string(i+1) + ".csv", feature_size, task_num);
+    Dataset test_data = load_dataset(path + "test_re" + to_string(i+1) + ".csv", feature_size, task_num);
+    booster.train(train_data, train_data, eval_metric, early_stopping_rounds, false);
     vector<float> score;
-    booster.predict(datasets[i].second, score, log_path);
+    booster.predict(test_data, score, log_path);
     scores.push_back(score);;
   }
   //calculate each task mean score
@@ -138,7 +137,7 @@ int single_school_boost() {
   int feature_size = 28;
   int task_num = 139;
   string log_path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\";
-  string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\school.csv";
+  string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\school_";
   int max_num_round = 500;
   int common_num_round = 500;
   float beta = 0.01;
@@ -175,9 +174,7 @@ int test_class_boost() {
 
 }
 
-int main(int argc, const char** argv) {
-//  test_boost();
-//  single_school_boost();
-  single_sarcos_boost();
+int main() {
+  single_school_boost();
   return 0;
 }
