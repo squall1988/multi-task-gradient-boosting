@@ -69,7 +69,7 @@ class Node {
   );
 
   /*! \belif: single train: find split point, multi thread version */
-  int find_split_point_thread(Dataset const &data, float lambda);
+  int find_split_point_thread(Dataset const &data, float lambda, int feature_size);
 
   static int find_split_point_single_feature_common_static(const vector<float> &feature,
                                                            const vector<float> &label,
@@ -90,7 +90,11 @@ class Node {
   );
 
   /*! \belif: common train: find split point, multi thread version */
-  int find_split_point_common_thread(Dataset const &data, float lambda, float beta, string regularization);
+  int find_split_point_common_thread(Dataset const &data,
+                                     float lambda,
+                                     float beta,
+                                     string regularization,
+  int feature_size);
 
   /*! \belief: stddev-based regularization. */
   static int stddev_regularization(const vector<float> &task_gains, float &reg);

@@ -250,7 +250,7 @@ int Node::find_split_point_single_feature_common(const vector<float> &feature,
   return 0;
 }
 
-int Node::find_split_point_thread(Dataset const &data, float lambda) {
+int Node::find_split_point_thread(Dataset const &data, float lambda, int feature_size) {
   vector<vector<float>> used_data;
   vector<float> used_label;
   vector<int> used_task;
@@ -261,9 +261,9 @@ int Node::find_split_point_thread(Dataset const &data, float lambda) {
   float best_score = -1.0f;
   ThreadPool pool(THREAD_NUM);
   std::vector<std::future<int> > results;
-  auto *cut_point = new float[data.get_common_feature_size()]();
-  auto *score = new float[data.get_common_feature_size()]();
-  for (int i = 0; i < data.get_common_feature_size(); ++i) {
+  auto *cut_point = new float[feature_size]();
+  auto *score = new float[feature_size]();
+  for (int i = 0; i < feature_size; ++i) {
     results.emplace_back(pool.enqueue(Node::find_split_point_single_feature_static,
                                       used_data[i],
                                       used_label,
@@ -281,7 +281,7 @@ int Node::find_split_point_thread(Dataset const &data, float lambda) {
       return NODE_SPLIT_ERROR;
     }
   }
-  for (int i = 0; i < data.get_common_feature_size(); ++i) {
+  for (int i = 0; i < feature_size; ++i) {
     if (score[i] > best_score) {
       best_score = score[i];
       best_feature = i;
@@ -348,7 +348,8 @@ int Node::find_split_point_single_feature_static(const vector<float> &feature,
   return SUCCESS;
 }
 
-int Node::find_split_point_common_thread(Dataset const &data, float lambda, float beta, string regularization) {
+int Node::find_split_point_common_thread(
+    Dataset const &data, float lambda, float beta, string regularization, int feature_size) {
   vector<vector<float>> used_data;
   vector<float> used_label;
   vector<int> used_task;
@@ -363,9 +364,9 @@ int Node::find_split_point_common_thread(Dataset const &data, float lambda, floa
   float best_score = -1000.0f;
   ThreadPool pool(THREAD_NUM);
   std::vector<std::future<int> > results;
-  auto *cut_point = new float[data.get_common_feature_size()]();
-  auto *score = new float[data.get_common_feature_size()]();
-  for (int i = 0; i < data.get_common_feature_size(); ++i) {
+  auto *cut_point = new float[feature_size]();
+  auto *score = new float[feature_size]();
+  for (int i = 0; i < feature_size; ++i) {
     results.emplace_back(pool.enqueue(Node::find_split_point_single_feature_common_static,
                                       used_data[i],
                                       used_label,
@@ -389,7 +390,7 @@ int Node::find_split_point_common_thread(Dataset const &data, float lambda, floa
       return NODE_SPLIT_ERROR;
     }
   }
-  for (int i = 0; i < data.get_common_feature_size(); ++i) {
+  for (int i = 0; i < feature_size; ++i) {
     if (score[i] > best_score) {
       best_score = score[i];
       best_feature = i;

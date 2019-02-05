@@ -19,9 +19,9 @@ int Tree::train(Dataset const &dataset) {
   root->calc_node_score(dataset.get_gradients(), lambda);
   if (dataset.get_task_num() > 1) {
     root->calc_node_scores(dataset, lambda);
-    root->find_split_point_common_thread(dataset, lambda, beta, this->regularization);
+    root->find_split_point_common_thread(dataset, lambda, beta, this->regularization, this->feature_size);
   } else {
-    root->find_split_point_thread(dataset, lambda);
+    root->find_split_point_thread(dataset, lambda, feature_size);
   }
   root->set_is_leaf(false);
   cout << "end generate root node" << endl;
@@ -40,9 +40,13 @@ int Tree::train(Dataset const &dataset) {
         // not null and the sample size is greater than min_sample_num
         if (dataset.get_task_num() > 1) {
           tmp->calc_node_scores(dataset, lambda);
-          tmp->find_split_point_common_thread(dataset, lambda, beta, this->regularization);
+          tmp->find_split_point_common_thread(dataset,
+                                              lambda,
+                                              beta,
+                                              this->regularization,
+                                              this->feature_size);
         } else {
-          tmp->find_split_point_thread(dataset, lambda);
+          tmp->find_split_point_thread(dataset, lambda, feature_size);
         }
         if (tmp->get_right_node() == NULL && tmp->get_left_node() == NULL) {
           tmp->set_is_leaf(true);
