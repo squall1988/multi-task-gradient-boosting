@@ -556,7 +556,6 @@ int Node::find_candidate_split_feature_value(const vector<float> &feature,
   }
   // sort by feature value
   sort(d.begin(), d.end(), cmp);
-  cout << "go here 1" << endl;
   float sum_h = 0.0f;
   for (int i = 0; i < d.size(); ++i) {
     sum_h += d[i].second;

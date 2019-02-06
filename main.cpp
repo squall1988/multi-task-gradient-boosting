@@ -165,9 +165,9 @@ int test_class_boost() {
   vector<int> common_num_rounds{0};
   vector<float> betas{0, 0.001, 1.0};
   vector<int> early_stopping_rounds{0};
-  float learning_rate = 0.1;
+  float learning_rate = 0.03;
   Booster<LogisticLoss, MultiTaskUpdater>
-      booster(20, 10, 5, 0.1, betas[0], 10, learning_rate, "variance");
+      booster(20, 5, 5, 0.1, betas[0], 10, learning_rate, "variance");
   vector<int> single_feature_size(4, 263);
   Dataset data = load_dataset("/Users/squall/work/tree/data/xijue_data.txt",
                               263,

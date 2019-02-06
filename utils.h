@@ -105,7 +105,7 @@ inline float ApproximateAUC(const vector<float> &label, const vector<float> &pre
   int posNum = 0;
   int negNum = 0;
   for (int i = 0; i < n; ++i) {
-    if (label[i] == 1) {
+    if (int(label[i]) == 1) {
       posNum += 1;
     } else {
       negNum += 1;
@@ -144,7 +144,7 @@ inline Matrix transpose(const Matrix &mat) {
   return mat_tran;
 }
 
-inline bool cmp(const pair<float, int> &a, const pair<float, float> &b) {
+inline bool cmp(const pair<float, float> &a, const pair<float, float> &b) {
   if (a.first == b.first) return a.second < b.second;
   else return a.first < b.first;
 }
