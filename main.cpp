@@ -22,9 +22,7 @@ Dataset load_dataset(string path, int feature_size,
   Dataset dataset(feature_size, task_num, single_feature_size);
   dataset.set_task_num(task_num);
   cout << "begin load train data" << endl;
-  dataset.load_data_from_file(
-      path,
-      ",");
+  dataset.load_data_from_file(path, ",");
   cout << "load train data successful" << endl;
   return dataset;
 }
@@ -170,7 +168,7 @@ int test_class_boost() {
   float learning_rate = 0.1;
   Booster<LogisticLoss, MultiTaskUpdater>
       booster(20, 10, 5, 0.1, betas[0], 10, learning_rate, "variance");
-  vector<int> single_feature_size(4, 81);
+  vector<int> single_feature_size(4, 263);
   Dataset data = load_dataset("/Users/squall/work/tree/data/xijue_data.txt",
                               263,
                               4,
@@ -183,6 +181,7 @@ int test_class_boost() {
 int main(int argc, const char **argv) {
 //  test_boost();
 //  single_school_boost();
-  single_sarcos_boost(argv[1], argv[2]);
+//  single_sarcos_boost(argv[1], argv[2]);
+  test_class_boost();
   return 0;
 }
