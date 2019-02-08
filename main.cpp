@@ -106,8 +106,8 @@ int single_sarcos_boost() {
   int task_num = 7;
   string log_path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\sarcos\\";
   string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\sarcos\\sub_sarcos.csv";
-  int max_num_round = 500;
-  int common_num_round = 500;
+  int max_num_round = 100;
+  int common_num_round = 50;
   float beta = 0;
   int early_stopping_round = 10;
   float learning_rate = 0.05;
@@ -136,14 +136,14 @@ int single_school_boost() {
   string dataset_name = "school";
   int feature_size = 28;
   int task_num = 139;
-  string log_path = "./log";
-  string path = "/Users/squall/work/tree/multi-task-gradient-boosting/data/school/school_";
-  int max_num_round = 500;
-  int common_num_round = 500;
+  string log_path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\";
+  string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\school_";
+  int max_num_round = 100;
+  int common_num_round = 50;
   float beta = 0.01;
   int early_stopping_round = 10;
   float learning_rate = 0.05;
-  string regularization = "variance";
+  string regularization = "entropy";
   boost(max_num_round,
         common_num_round,
         beta,

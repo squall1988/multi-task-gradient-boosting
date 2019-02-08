@@ -97,6 +97,42 @@ inline float BinaryLogLoss(const vector<float> &label, const vector<float> &pred
   return sum_error / label.size();
 }
 
+inline bool auc_cmp(const pair<float, float> &a, const pair<float, float> &b){
+  return a.second < b.second;
+}
+
+inline float AUC(const vector<float> &label, const vector<float> &pred) {
+  if (label.size() != pred.size() || label.empty() || pred.empty()) {
+    return AUC_ERROR;
+  }
+  int n = label.size();
+  int posNum = 0;
+  int negNum = 0;
+  for (int i = 0; i < n; ++i) {
+    if (label[i] == 1) {
+      posNum += 1;
+    } else {
+      negNum += 1;
+    }
+  }
+  int total_pair = posNum * negNum;
+  vector<pair<float, float>>label_pred;
+  for(int i=0;i<n;++i) {
+    label_pred.emplace_back(make_pair(label[i],pred[i]));
+  }
+  sort(label_pred.begin(), label_pred.end(), auc_cmp);
+  int accumulated_neg = 0;
+  int satisfied_pair = 0;
+  for(int i=0;i<n;++i) {
+    if(label_pred[i].first == 1) {
+      satisfied_pair += accumulated_neg;
+    }else{
+      accumulated_neg += 1;
+    }
+  }
+  return satisfied_pair / (float)(total_pair);
+}
+
 inline float ApproximateAUC(const vector<float> &label, const vector<float> &pred) {
   if (label.size() != pred.size() || label.empty() || pred.empty()) {
     return AUC_ERROR;
@@ -144,12 +180,15 @@ inline Matrix transpose(const Matrix &mat) {
   return mat_tran;
 }
 
-inline bool cmp(const pair<float, int> &a, const pair<float, float> &b) {
+inline bool cmp(const pair<float, float> &a, const pair<float, float> &b) {
   if (a.first == b.first) return a.second < b.second;
   else return a.first < b.first;
 }
 
+
+
 } // common
+
 
 
 
