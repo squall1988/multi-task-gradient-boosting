@@ -353,7 +353,7 @@ int Booster<LOSS, UPDATER>::calculate_loss_score(const vector<float> &label,
     loss_score = BinaryLogLoss(label, pred);
     cout << "this is the " << task_id << "th task logloss: " << loss_score << endl;
   } else if (eval_metric == "auc") {
-    loss_score = 1 - ApproximateAUC(label, pred);
+    loss_score = 1 - AUC(label, pred);
     cout << "this is the " << task_id << "th task auc: " << 1 - loss_score << endl;
   } else if (eval_metric == "rmse") {
     loss_score = RMSE(label, pred);
