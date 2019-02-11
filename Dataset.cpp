@@ -107,7 +107,6 @@ int Dataset::get_data_by_tasks(vector<Dataset> &datasets) const {
   }
   for (int i = 0; i < this->task_num; ++i) {
     datasets[i].data = data[i + 1];
-    cout << data[i+1].size() << endl;
     datasets[i].label = labels[i + 1];
     datasets[i].task_num = 1;
     if (!this->gradients.empty()) {

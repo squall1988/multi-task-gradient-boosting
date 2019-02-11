@@ -116,7 +116,7 @@ int Tree::predict(const Dataset &dataset, vector<float> &pred) {
   if (dataset.get_data_size() == 0 || root == NULL) {
     return TREE_PREDICT_ERROR;
   }
-  cout << "go into the predict" << endl;
+//  cout << "go into the predict" << endl;
   const Matrix &data = dataset.get_data();
   for (int i = 0; i < dataset.get_data_size(); ++i) {
     Node *current = root;
