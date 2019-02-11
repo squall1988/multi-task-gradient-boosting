@@ -138,12 +138,12 @@ int single_school_boost() {
   int task_num = 139;
   string log_path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\";
   string path = "D:\\C++\\ClionProject\\multi-task-gradient-boosting\\data\\school\\school_";
-  int max_num_round = 100;
-  int common_num_round = 50;
+  int max_num_round = 10;
+  int common_num_round = 5;
   float beta = 0.01;
   int early_stopping_round = 10;
-  float learning_rate = 0.05;
-  string regularization = "entropy";
+  float learning_rate = 0.5;
+  string regularization = "variance";
   boost(max_num_round,
         common_num_round,
         beta,
