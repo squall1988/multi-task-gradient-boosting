@@ -130,6 +130,7 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
 //    cout << "this is the gradient size: " << gradient.size() << endl;
     dataset.set_gradients(gradient);
     if (i == common_num_round) break;
+    cout << "Train common trees, feature size is " << dataset.get_common_feature_size() << endl;
     Tree *new_tree =
         new Tree(max_depth,
                  lambda,
@@ -155,7 +156,7 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
   vector<Dataset> datasets;
   vector<Dataset> eval_datasets;
   for (int i = 0; i < dataset.get_task_num(); ++i) {
-    Dataset tmp_dataset(dataset.get_common_feature_size(), dataset.get_task_num(),
+    Dataset tmp_dataset(dataset.get_common_feature_size(), 1,
                         dataset.get_single_feature_size());
     datasets.push_back(tmp_dataset);
     Dataset tmp_eval_dataset(eval_set.get_common_feature_size(), eval_set.get_task_num(),
@@ -202,7 +203,8 @@ int Booster<LOSS, UPDATER>::train(Dataset &dataset,
   vector<vector<float> > eval_preds(best_eval_preds);
 
   for (int i = 0; i < dataset.get_task_num(); ++i) {
-    cout << endl << "this is the " << i + 1 << "th task single train" << endl;
+    cout << endl << "this is the " << i + 1 << "th task single train, feature size is : " <<
+         dataset.get_single_feature_size(i) << endl;
     int accum_rounds = 0;
     for (int j = 0; j < this->single_num_rounds[i] + 1; ++j) {
       if (j == 0) {
@@ -362,4 +364,5 @@ int Booster<LOSS, UPDATER>::calculate_loss_score(const vector<float> &label,
     loss_score = nrMSE(label, pred);
     cout << "this is the " << task_id << "th task nrmse: " << loss_score << endl;
   }
+  return 0;
 }

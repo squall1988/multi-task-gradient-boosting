@@ -168,20 +168,39 @@ int test_class_boost() {
   float learning_rate = 0.03;
   Booster<LogisticLoss, MultiTaskUpdater>
       booster(20, 5, 5, 0.1, betas[0], 10, learning_rate, "variance");
-  vector<int> single_feature_size(4, 263);
-  Dataset data = load_dataset("/Users/squall/work/tree/data/xijue_data.txt",
-                              263,
-                              4,
+  vector<int> single_feature_size(3, 336);
+  Dataset data = load_dataset("/Users/squall/work/tree/data/xijue_data_new.txt",
+                              336,
+                              3,
                               single_feature_size);
-  booster.train(data, data, "auc", 4, false);
+  booster.train(data, data, "auc", 3, false);
+  return SUCCESS;
+
+}
+
+
+int test_yx_class_boost() {
+  vector<int> common_num_rounds{0};
+  vector<float> betas{0, 0.001, 1.0};
+  vector<int> early_stopping_rounds{0};
+  float learning_rate = 0.03;
+  Booster<LogisticLoss, MultiTaskUpdater>
+      booster(50, 20, 5, 0.1, betas[0], 10, learning_rate, "variance");
+  vector<int> single_feature_size{81, 202};
+  Dataset data = load_dataset("/Users/squall/work/tree/data/yx_final",
+                              81,
+                              2,
+                              single_feature_size);
+  booster.train(data, data, "auc", 3, false);
   return SUCCESS;
 
 }
 
 int main(int argc, const char **argv) {
 //  test_boost();
-//  single_school_boost();
+//  single_school_boost();z
 //  single_sarcos_boost(argv[1], argv[2]);
-  test_class_boost();
+//  test_class_boost();
+  test_yx_class_boost();
   return 0;
 }

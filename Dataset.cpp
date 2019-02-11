@@ -55,7 +55,7 @@ int Dataset::get_sample_by_index(vector<int> &index,
                                  vector<int> &selected_task,
                                  Matrix &selected_gradients) const {
   // 这里的计算感觉是不需要的。
-  for (int i = 0; i < this->common_feature_size; i++) {
+  for (int i = 0; i < this->max_size; i++) {
     vector<float> tmp;
     for (int j = 0; j < index.size(); j++) {
       tmp.push_back(this->data[i][index[j]]);
@@ -70,7 +70,9 @@ int Dataset::get_sample_by_index(vector<int> &index,
   }
   return 0;
 }
-
+/*
+ * This method is used to split data by task
+ */
 int Dataset::get_data_by_tasks(vector<Dataset> &datasets) const {
   vector<Matrix> data(this->task_num + 1);
   vector<vector<float>> labels(this->task_num + 1);
@@ -81,14 +83,14 @@ int Dataset::get_data_by_tasks(vector<Dataset> &datasets) const {
   // 存储方式：一行一个sample
   for (int i = 0; i < this->dataset_size; ++i) {
     vector<float> tmp;
-    for (int j = 0; j < this->common_feature_size; ++j) {
+    for (int j = 0; j < this->max_size; ++j) {
       tmp.push_back(this->data[j][i]);
     }
     tmp_data[this->task[i]].push_back(tmp);
   }
   // 存储方式改为一行一个feature
   for (int i = 1; i <= this->task_num; ++i) {
-    for (int j = 0; j < this->common_feature_size; ++j) {
+    for (int j = 0; j < this->max_size; ++j) {
       vector<float> tmp;
       for (int k = 0; k < tmp_data[i].size(); ++k) {
         tmp.push_back(tmp_data[i][k][j]);
@@ -105,6 +107,7 @@ int Dataset::get_data_by_tasks(vector<Dataset> &datasets) const {
   }
   for (int i = 0; i < this->task_num; ++i) {
     datasets[i].data = data[i + 1];
+    cout << data[i+1].size() << endl;
     datasets[i].label = labels[i + 1];
     datasets[i].task_num = 1;
     if (!this->gradients.empty()) {

@@ -19,13 +19,9 @@ using namespace common;
 
 class Dataset {
  public:
-  Dataset(int feature_size, int task_num, const vector<int> &single_feature_size) :
-      common_feature_size(feature_size), task_num(task_num){
-    for (int i = 0; i < feature_size; i++) {
-      vector<float> feature;
-      this->data.push_back(feature);
-    }
-    this->candidate_cut_points.resize(feature_size);
+  Dataset(int common_feature_size, int task_num, const vector<int> &single_feature_size) :
+      common_feature_size(common_feature_size), task_num(task_num){
+
     this->single_feature_size = single_feature_size;
     this->max_size = 0;
     for(int i = 0; i < single_feature_size.size(); ++i) {
@@ -33,6 +29,11 @@ class Dataset {
         this->max_size = single_feature_size[i];
       }
     }
+    for (int i = 0; i < this->max_size; i++) {
+      vector<float> feature;
+      this->data.push_back(feature);
+    }
+    this->candidate_cut_points.resize(this->max_size);
   }
 
   /*! \belief: get sample from the file */
