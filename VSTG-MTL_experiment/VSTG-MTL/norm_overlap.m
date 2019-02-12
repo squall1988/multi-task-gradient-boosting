@@ -7,12 +7,21 @@ function [ normw , alpha ] = norm_overlap( w, k )
 % alpha is a subgradient
 
 d = length(w);
+% d
+% size(w)
 [beta, ind] = sort(abs(w), 'descend');
 
 s = sum(beta(k:d));
 temp = s;
 found = false;
+% size(beta)
+% k=2;
 for r=0:k-2
+    r
+    k-2
+    beta(k-r-1)
+    beta
+    beta(k-r)
   if ( (temp >= (r+1)*beta(k-r)) && (temp < (r+1)*beta(k-r-1)) )
     found = true;
     break;
