@@ -183,15 +183,15 @@ int test_yx_class_boost() {
   vector<int> common_num_rounds{0};
   vector<float> betas{0, 0.001, 1.0};
   vector<int> early_stopping_rounds{0};
-  float learning_rate = 0.03;
+  float learning_rate = 0.05;
   Booster<LogisticLoss, MultiTaskUpdater>
-      booster(50, 10, 5, 0.1, betas[0], 10, learning_rate, "entropy");
-  vector<int> single_feature_size{81, 202};
-  Dataset data = load_dataset("/Users/squall/work/tree/data/yx_final",
-                              81,
+      booster(53, 20, 5, 0.1, betas[0], 10, learning_rate, "variance");
+  vector<int> single_feature_size{44, 44};
+  Dataset data = load_dataset("/Users/squall/work/tree/data/xj_final_new",
+                              44,
                               2,
                               single_feature_size);
-  booster.train(data, data, "auc", 3, false);
+  booster.train(data, data, "auc", 4, false);
   return SUCCESS;
 
 }
