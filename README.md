@@ -10,6 +10,7 @@ Refer run experiment code. If you want to split csv file into n pairs(training d
     + rMTFL: run example_rMTFL.m
     + Lasso: run example_Lasso.m
     + Trace: run example_Trace.m
+    + Dirty: run example_Dirty.m
 + VSTG-MTL_experiment
     + run demo.m
     
