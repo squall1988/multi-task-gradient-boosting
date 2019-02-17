@@ -42,42 +42,33 @@ addpath('../MALSAR/c_files/prf_lbm/'); % load projection c libraries.
 addpath('../MALSAR/utils/'); % load utilities
 
 %rng('default');     % reset random generator. Available from Matlab 2011.
+scores = []
+for i = 1:10
+    % school data
+    load(['../data/school_mat/school_re', num2str(i), '.mat'])
 
-%generate synthetic data.
-dimension = 500;
-sample_size = 50;
-task = 50;
-X = cell(task ,1);
-Y = cell(task ,1);
-for i = 1: task
-    X{i} = rand(sample_size, dimension);
-    Y{i} = rand(sample_size, 1);
+    opts.init = 0;      % guess start point from data.
+    opts.tFlag = 1;     % terminate after relative objective value does not changes much.
+    opts.tol = 10^-4;   % tolerance.
+    opts.maxIter = 500; % maximum iteration number of optimization.
+
+    rho_1 = 350;%   rho1: group sparsity regularization parameter
+    rho_2 = 10;%   rho2: elementwise sparsity regularization parameter
+
+    [W, funcVal, P, Q] = Least_Dirty(train_input, train_output, rho_1, rho_2, opts);
+    for task=1:139
+        test_output_hat{task} = test_input{task} * W(:,task);
+        resi{task} = test_output{task} - test_output_hat{task};
+        RMSE(task) = sqrt(mean(resi{task}.^2));
+        %NRMSE(task) = sqrt(mean(resi{task}.^2))/(max(resi{task})-min(resi{task}));
+    end
+    fprintf(sprintf('RMSE: %f\n',mean(RMSE)));
+    %fprintf(sprintf('NRMSE: %f\n',mean(NRMSE)));
+    scores = [scores, mean(RMSE)]
+    %scores = [scores, mean(NRMSE)]
 end
-
-opts.init = 0;      % guess start point from data. 
-opts.tFlag = 1;     % terminate after relative objective value does not changes much.
-opts.tol = 10^-4;   % tolerance. 
-opts.maxIter = 500; % maximum iteration number of optimization.
-
-rho_1 = 350;%   rho1: group sparsity regularization parameter
-rho_2 = 10;%   rho2: elementwise sparsity regularization parameter
-
-[W, funcVal, P, Q] = Least_Dirty(X, Y, rho_1, rho_2, opts);
+fprintf(sprintf('Mean RMSE: %f\n',mean(scores)));
 
 
 
-% draw figure
-close;
-figure();
-subplot(3,1,1);
-imshow(1- (abs(P')~=0), 'InitialMagnification', 'fit');
-ylabel('P^T');
-title('Visualization Non-Zero Entries in Dirty Model');
-subplot(3,1,2);
-imshow(1- (abs(Q')~=0), 'InitialMagnification', 'fit')
-ylabel('Q^T');
-subplot(3,1,3);
-imshow(1- (abs(W')~=0), 'InitialMagnification', 'fit')
-ylabel('W^T');
-xlabel('Dimension')
 
