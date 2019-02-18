@@ -47,9 +47,9 @@ for i = 1:10
     % school data
     load(['../data/school_mat/school_re', num2str(i), '.mat'])
 
-    opts.init = 0;      % guess start point from data.
+    opts.init = 0;      % guess start point from data. 
     opts.tFlag = 1;     % terminate after relative objective value does not changes much.
-    opts.tol = 10^-4;   % tolerance.
+    opts.tol = 10^-4;   % tolerance. 
     opts.maxIter = 500; % maximum iteration number of optimization.
 
     rho_1 = 350;%   rho1: group sparsity regularization parameter
@@ -67,7 +67,7 @@ for i = 1:10
     scores = [scores, mean(RMSE)]
     %scores = [scores, mean(NRMSE)]
 end
-fprintf(sprintf('Mean RMSE: %f\n',mean(scores)));
+fprintf(sprintf('Mean RMSE: %f +/- %f\n',mean(scores),var(scores)));
 
 
 

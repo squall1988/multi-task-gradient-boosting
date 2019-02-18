@@ -48,14 +48,30 @@ int boost(int max_num_round,
       booster(max_num_round, common_num_round, 5, 0.1, beta, 10, learning_rate, regularization);
 //  vector<pair<Dataset, Dataset>> datasets = data.shuffle_split(n_splits, 0.25, 33);
   Matrix scores;
+  vector<float> mean_scores;
   for (int i = 0; i < n_splits; ++i) {
     Dataset train_data = load_dataset(path + "train_re" + to_string(i+1) + ".csv", feature_size, task_num);
     Dataset test_data = load_dataset(path + "test_re" + to_string(i+1) + ".csv", feature_size, task_num);
     booster.train(train_data, train_data, eval_metric, early_stopping_rounds, false);
     vector<float> score;
     booster.predict(test_data, score, log_path);
-    scores.push_back(score);;
+    float mean_score = 0;
+    for(int j=0;j<task_num;++j){
+      mean_score+=score[j];
+    }
+    mean_scores.push_back(mean_score/task_num);
+    scores.push_back(score);
   }
+
+  float final_mean_score = 0;
+  float final_var = 0.0f;
+  float t_sum = std::accumulate(std::begin(mean_scores), std::end(mean_scores), 0.0f);
+  final_mean_score = t_sum / mean_scores.size();
+  for (vector<float>::const_iterator it = mean_scores.begin(); it != mean_scores.end(); ++it) {
+    final_var += (*it - final_mean_score) * (*it - final_mean_score);
+  }
+  final_var = final_var / (mean_scores.size() - 1);
+
   //calculate each task mean score
   Matrix scores_tran = transpose(scores);
   ofstream ofile(log_path + "log_score", ios::app);
@@ -88,9 +104,10 @@ int boost(int max_num_round,
     ofile << std::setprecision(4) << mean << "\t";
   }
   ofile << endl;
+
   time_t now = time(NULL);
-  cout << asctime(localtime(&now)) << eval_metric << " score:  " << avg_score / scores_tran.size() << endl;
-  ofile << asctime(localtime(&now)) << eval_metric << " score:  " << avg_score / scores_tran.size() << endl;
+  cout << asctime(localtime(&now)) << eval_metric << " score:  " << final_mean_score << "+/-" << final_var <<endl;
+  ofile << asctime(localtime(&now)) << eval_metric << " score:  " << final_mean_score << "+/-" << final_var <<endl;
   clock_t finish = clock();
   cout << "program cost time: " << (double)(finish - start)/CLOCKS_PER_SEC <<"seconds" << endl;
   ofile << "program cost time: " << (double)(finish - start)/CLOCKS_PER_SEC <<"seconds" << endl;
@@ -143,7 +160,7 @@ int single_school_boost() {
   float beta = 0.01;
   int early_stopping_round = 10;
   float learning_rate = 0.5;
-  string regularization = "variance";
+  string regularization = "entropy";
   boost(max_num_round,
         common_num_round,
         beta,

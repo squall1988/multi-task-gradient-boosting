@@ -11,8 +11,6 @@ Refer run experiment code. If you want to split csv file into n pairs(training d
     + Lasso: run example_Lasso.m
     + Trace: run example_Trace.m
     + Dirty: run example_Dirty.m
-+ VSTG-MTL_experiment
-    + run demo.m
     
 + Multi-Task GBDT
     + run main.cpp
@@ -35,6 +33,6 @@ Results from the real datasets for RMSE over 10 repetitions. The statistically b
 
 (Independent-Lightgbm: Train T models for T tasks, Aggregate-Lightgbm: Train one model for T tasks(regard T tasks as one task))
 
-|Dataset|Measure|Trace|LASSO|rMTFL|Dirty|VSTG-MTL|Independent-Lightgbm|Aggregate-Lightgbm|Variance-based Multi-Task GBDT|Entropy-based Multi-Task GBDT|
+|Dataset|Measure|Trace|LASSO|rMTFL|Dirty|Independent-Lightgbm|Aggregate-Lightgbm|Variance-based Multi-Task GBDT|Entropy-based Multi-Task GBDT|
 |---|:---:|---:|:---:|---:|:---:|---:|---:|:---:|---:|:---:|
-|school|RMSE|11.45|11.21|10.46|10.41|9.95|11.19|10.04|**8.99**|9.00|
+|school|RMSE|11.452 +/- 0.012|11.216 +/- 0.010|10.467 +/- 0.027|10.411 +/- 0.029|10.767 +/- 0.007|11.099 +/- 0.012|**8.993 +/- 0.232**|8.998 +/- 0.239|

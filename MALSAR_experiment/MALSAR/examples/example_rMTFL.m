@@ -54,4 +54,4 @@ for i = 1:10
     scores = [scores, mean(RMSE)]
     %scores = [scores, mean(NRMSE)]
 end
-fprintf(sprintf('Mean RMSE: %f\n',mean(scores)));
+fprintf(sprintf('Mean RMSE: %f +/- %f\n',mean(scores),var(scores)));
