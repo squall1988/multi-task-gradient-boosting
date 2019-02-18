@@ -34,5 +34,5 @@ Results from the real datasets for RMSE over 10 repetitions. The statistically b
 (Independent-Lightgbm: Train T models for T tasks, Aggregate-Lightgbm: Train one model for T tasks(regard T tasks as one task))
 
 |Dataset|Measure|Trace|LASSO|rMTFL|Dirty|Independent-Lightgbm|Aggregate-Lightgbm|Variance-based Multi-Task GBDT|Entropy-based Multi-Task GBDT|
-|---|:---:|---:|:---:|---:|:---:|---:|---:|:---:|---:|:---:|
+|---|:---:|---:|:---:|---:|:---:|---:|:---:|---:|:---:|
 |school|RMSE|11.452 +/- 0.012|11.216 +/- 0.010|10.467 +/- 0.027|10.411 +/- 0.029|10.767 +/- 0.007|11.099 +/- 0.012|**8.993 +/- 0.232**|8.998 +/- 0.239|
