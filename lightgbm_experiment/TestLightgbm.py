@@ -24,14 +24,14 @@ def repetition(df, n_splits, test_size, eval_metric):
     for train_index, test_index in ss.split(X):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
-        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=100, min_child_samples=1, random_state=33,n_jobs=-1)
+        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=10, min_child_samples=1, random_state=33,n_jobs=-1)
         gbm.fit(X_train,y_train)
         y_pred = gbm.predict(X_test)
         if eval_metric == 'rmse':
             score.append((mean_squared_error(y_test, y_pred))**0.5)
         if eval_metric == 'nrmse':
             score.append(((mean_squared_error(y_test, y_pred))**0.5)/(np.max(y_test)-np.min(y_test)))
-    return np.mean(score)
+    return score
 
 
 # 预测还要每个任务单独预测评估
@@ -74,7 +74,7 @@ def repetition_agg(list, n_splits, test_size, eval_metric):
             y_train_agg[cnt:cnt+len(t)] = t
             cnt += t.shape[0]
 
-        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=100, min_child_samples=1, random_state=33, n_jobs=-1)
+        gbm = lgb.LGBMRegressor(learning_rate=0.05, n_estimators=10, min_child_samples=1, random_state=33, n_jobs=-1)
         gbm.fit(X_train_agg, y_train_agg)
         y_test_set.append(y_test_list)
         for test in X_test_list:
@@ -92,7 +92,15 @@ def repetition_agg(list, n_splits, test_size, eval_metric):
             elif eval_metric == 'nrmse':
                 score.append(((mean_squared_error(y_test_set[j][i], y_pred_set[j][i]))**0.5)/(np.max(y_test_set[j][i])-np.min(y_test_set[j][i])))
         agg_score.append(np.mean(score))
-    return np.mean(agg_score)
+
+    final_scores = []
+    for i in range(n_splits):
+        score = []
+        for j in range(task_num):
+            if eval_metric == 'rmse':
+                score.append((mean_squared_error(y_test_set[i][j], y_pred_set[i][j]))**0.5)
+        final_scores.append(np.mean(score))
+    return np.mean(final_scores), np.var(final_scores)
 
 
 def indepenent_experiment(data, task_num, eval_metric):
@@ -101,7 +109,11 @@ def indepenent_experiment(data, task_num, eval_metric):
     for e in list:
         s = repetition(e, 10, 0.25, eval_metric)
         score.append(s)
-    return np.mean(score)
+    final_scores = np.transpose(np.array(score))
+    t_scores = []
+    for i in range(10):
+        t_scores.append(np.mean(final_scores[i]))
+    return np.mean(t_scores), np.var(t_scores)
 
 
 def aggregate_experiment(data, task_num, eval_metric):
@@ -109,11 +121,10 @@ def aggregate_experiment(data, task_num, eval_metric):
     return repetition_agg(list, 10, 0.25, eval_metric)
 
 
+score, var = indepenent_experiment('./data/school.csv', 139, 'rmse')
+print("The mean RMSE score of independent lightgbm: {} +/- {}".format(score, var))
 
-score = indepenent_experiment('./data/school.csv', 139, 'rmse')
-print("The mean RMSE score of independent lightgbm: {}".format(score))
-
-score = aggregate_experiment('./data/school.csv', 139, 'rmse')
-print("The mean RMSE score of aggregate lightgbm: {}".format(score))
+score, var = aggregate_experiment('./data/school.csv', 139, 'rmse')
+print("The mean RMSE score of aggregate lightgbm: {} +/- {}".format(score, var))
 
 

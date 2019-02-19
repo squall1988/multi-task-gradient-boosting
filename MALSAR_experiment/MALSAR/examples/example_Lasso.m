@@ -55,7 +55,7 @@ log_lam  = log(lambda);
 scores = []
 for i = 1:10
     % school data
-    load(['./school_mat/school_re', num2str(i), '.mat'])
+    load(['../data/school_mat/school_re', num2str(i), '.mat'])
     [W funcVal] = Least_Lasso(train_input, train_output, 100, opts);
     for task=1:139
         test_output_hat{task} = test_input{task} * W(:,task);
@@ -68,4 +68,4 @@ for i = 1:10
     scores = [scores, mean(RMSE)]
     %scores = [scores, mean(NRMSE)]
 end
-fprintf(sprintf('Mean RMSE: %f\n',mean(scores)));
+fprintf(sprintf('Mean RMSE: %f +/- %f\n',mean(scores),var(scores)));
