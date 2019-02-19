@@ -173,7 +173,12 @@ int test_class_boost() {
                               336,
                               3,
                               single_feature_size);
-  booster.train(data, data, "auc", 3, false);
+
+  Dataset test_data = load_dataset("/Users/squall/work/tree/data/xijue_data_new_test.txt",
+                              336,
+                              3,
+                              single_feature_size);
+  booster.train(data, test_data, "auc", 3, false);
   return SUCCESS;
 
 }
@@ -191,7 +196,11 @@ int test_yx_class_boost() {
                               44,
                               2,
                               single_feature_size);
-  booster.train(data, data, "auc", 4, false);
+  Dataset test_data = load_dataset("/Users/squall/work/tree/data/xj_final_new_test",
+                              44,
+                              2,
+                              single_feature_size);
+  booster.train(data, test_data, "auc", 4, false);
   return SUCCESS;
 
 }

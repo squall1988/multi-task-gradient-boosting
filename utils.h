@@ -188,8 +188,11 @@ inline double AUC(const vector<float> &label, const vector<float> &pred) {
   return satisfied_pair / static_cast<double>(total_pair);
 }
 
-} // common
+void fill_index(vector<int>& src) {
+  std::generate(src.begin(), src.end(), [n=0]() mutable {return n++;});
+}
 
+} // common
 
 
 
