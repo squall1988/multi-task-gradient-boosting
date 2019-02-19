@@ -1,11 +1,9 @@
 # multi-task-gradient-boosting
 
 # Usage
-Refer run experiment code. If you want to split csv file into n pairs(training data and test data), run './lightgbm_experiment/data_transformer.py', which can both generate csv format and mat format for experiment.
+Refer run experiment code. If you want to split csv file into n pairs(training data and test data).
 
 # Run Experiment Code
-+ lightgbm_experiment
-    + run TestLightgbm.py
 + MALSAR_experiment
     + rMTFL: run example_rMTFL.m
     + Lasso: run example_Lasso.m
@@ -31,7 +29,7 @@ Refer run experiment code. If you want to split csv file into n pairs(training d
 # Experiment Results
 Results from the real datasets for RMSE over 10 repetitions. The statistically best model is highlighted in bold.
 
-(Independent-Lightgbm: Train T models for T tasks, Aggregate-Lightgbm: Train one model for T tasks(regard T tasks as one task))
+(Independent-XGBoost: Train T models for T tasks, Aggregate-XGBoost: Train one model for T tasks(regard T tasks as one task))
 
 |Dataset|Measure|Trace|LASSO|rMTFL|Dirty|Independent-XGBoost|Aggregate-XGBoost|Variance-based Multi-Task GBDT|Entropy-based Multi-Task GBDT|
 |---|:---:|---:|:---:|---:|:---:|---:|:---:|---:|:---:|
