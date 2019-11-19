@@ -34,3 +34,23 @@ Results from the real datasets for RMSE over 10 repetitions. The statistically b
 |Dataset|Measure|Trace|LASSO|rMTFL|Dirty|Independent-XGBoost|Aggregate-XGBoost|Variance-based Multi-Task GBDT|Entropy-based Multi-Task GBDT|
 |---|:---:|---:|:---:|---:|:---:|---:|:---:|---:|:---:|
 |school|RMSE|11.452 +/- 0.012|11.216 +/- 0.010|10.467 +/- 0.027|10.411 +/- 0.029|10.767 +/- 0.007|11.099 +/- 0.012|**8.993 +/- 0.232**|8.998 +/- 0.239|
+
+cite
+```
+@inproceedings{DBLP:conf/cikm/ZhangL19,
+  author    = {Ya{-}Lin Zhang and
+               Longfei Li},
+  title     = {Interpretable {MTL} from Heterogeneous Domains using Boosted Tree},
+  booktitle = {Proceedings of the 28th {ACM} International Conference on Information
+               and Knowledge Management, {CIKM} 2019, Beijing, China, November 3-7,
+               2019},
+  pages     = {2053--2056},
+  year      = {2019},
+  crossref  = {DBLP:conf/cikm/2019},
+  url       = {https://doi.org/10.1145/3357384.3358072},
+  doi       = {10.1145/3357384.3358072},
+  timestamp = {Mon, 04 Nov 2019 11:09:32 +0100},
+  biburl    = {https://dblp.org/rec/bib/conf/cikm/ZhangL19},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+```
