@@ -1,6 +1,7 @@
 //
 // Created by squall on 18-6-11.
 //
+#pragma once
 
 #ifndef MTREE_UTILS_H
 #define MTREE_UTILS_H
@@ -188,7 +189,7 @@ inline double AUC(const vector<float> &label, const vector<float> &pred) {
   return satisfied_pair / static_cast<double>(total_pair);
 }
 
-void fill_index(vector<int>& src) {
+inline void fill_index(vector<int>& src) {
   std::generate(src.begin(), src.end(), [n=0]() mutable {return n++;});
 }
 
