@@ -35,3 +35,19 @@ int LogisticLoss::get_gradient(const vector<float> &pred, const vector<float> &l
   }
   return SUCCESS;
 }
+
+int L1Loss::get_gradient(const vector<float> &pred, const vector<float> &label, Matrix &gradients) {
+  if (pred.size() != label.size()) {
+    return LOSS_ERROR;
+  }
+  for (int i = 0; i < pred.size(); ++i) {
+    float g = pred[i] - label[i];
+	g = static_cast<float>(common::Sign(g));
+    float h = 1.0f;
+    vector<float> tmp{g, h};
+//    tmp.push_back(g);
+//    tmp.push_back(h);
+    gradients.push_back(tmp);
+  }
+  return SUCCESS;
+}

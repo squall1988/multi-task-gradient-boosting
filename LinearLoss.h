@@ -17,4 +17,11 @@ class LogisticLoss : public Loss {
  public:
   int get_gradient(const vector<float> &pred, const vector<float> &label, Matrix &gradients) override;
 };
+
+
+class L1Loss : public Loss {
+ public:
+  int get_gradient(const vector<float> &pred, const vector<float> &label, Matrix &gradients) override;
+};
 #endif //MTREE_LINEARLOSS_H
+

@@ -193,6 +193,12 @@ inline void fill_index(vector<int>& src) {
   std::generate(src.begin(), src.end(), [n=0]() mutable {return n++;});
 }
 
+template <typename T>
+static int Sign(T x) {
+  return (x > T(0)) - (x < T(0));
+}
+
+
 } // common
 
 
